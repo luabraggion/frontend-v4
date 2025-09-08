@@ -1,0 +1,10 @@
+
+# 🎯 Pre-commit hook: Executa lint-staged
+# Verifica e corrige código antes de cada commit
+# 🎯 Pre-commit hook: Executa lint-staged
+# Verifica e corrige código antes de cada commit
+
+echo "🔍 Executando verificações de qualidade..."
+npx lint-staged
+
+echo "✅ Código verificado e corrigido!"
