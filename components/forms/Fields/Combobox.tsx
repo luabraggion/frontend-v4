@@ -1,9 +1,9 @@
-import { useEffect, useState, useId } from 'react';
-import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
-import { cn } from '@/lib/ui';
-import { Button } from '@/components/ui/button';
 import { Label } from '@/components/forms/Labels';
+import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/ui';
+import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
+import { useEffect, useId, useState } from 'react';
 
 import {
   Command,
@@ -27,6 +27,7 @@ interface ComboboxProps {
   id?: string;
   label?: string;
   name?: string;
+  className?: string;
   onChange?: (value: string) => void;
 }
 
@@ -38,6 +39,7 @@ export function Combobox({
   id,
   label = 'Título',
   name,
+  className,
 }: ComboboxProps) {
   const autoId = useId(); // Gera um id único para o input se não for passado via prop
   const inputId = id || `combobox-input-${autoId}`; // Garante que o id seja string (useId pode retornar string)
@@ -68,7 +70,7 @@ export function Combobox({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between font-normal"
+            className={cn('w-full justify-between font-normal', className)}
           >
             {/* Exibe o label da opção selecionada ou o placeholder */}
             {selected ? options.find((option) => option.value === selected)?.label : placeholder}

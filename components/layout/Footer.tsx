@@ -18,7 +18,7 @@ const Copyright = ({ year, companyName }: { year: number; companyName: string })
     &copy; {year}
     <span className="flex items-center gap-1 font-semibold ml-1">
       <Image
-        src="/logo.png"
+        src="/images/logo.png"
         alt="Logo Portal de Benefícios"
         width={20}
         height={20}

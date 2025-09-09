@@ -200,3 +200,5 @@ optimize-*.js
 # Builds de documentação
 /docs/build
 /docs/.docusaurus
+
+*storybook.log

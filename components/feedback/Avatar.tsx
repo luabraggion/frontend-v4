@@ -214,7 +214,7 @@ export const Avatar = memo<AvatarProps>(
 
     // Memoiza a cor de fundo baseada no nome
     const backgroundColor = useMemo(
-      () => (name ? getBackgroundColor(name) : 'bg-gray-500'),
+      () => (name ? getBackgroundColor(name) : 'bg-gray-200'),
       [name],
     );
 

@@ -257,6 +257,7 @@ export const Alert = memo<AlertProps>(
 );
 
 Alert.displayName = 'Alert';
+export default Alert;
 
 // Variações pré-configuradas para casos comuns
 export const SuccessAlert = memo<Omit<AlertProps, 'variant'>>((props) => (

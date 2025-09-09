@@ -1,0 +1,199 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Bem vindo" />
+
+# 🚀 Sistema de Componentes - Next.js
+
+Bem-vindo à documentação interativa do sistema de componentes deste projeto! Aqui você encontra tudo sobre arquitetura, padrões, exemplos, guidelines, comandos e dicas para evoluir e manter o frontend com qualidade e performance.
+
+---
+
+## 📦 Stack Tecnológica
+
+- **Next.js 15** (App Router, SSR/SSG, Turbopack)
+- **React 19** (Concurrent, Server Components)
+- **TypeScript 5** (Type Safety)
+- **Tailwind CSS 4** (Utility-first CSS)
+- **shadcn/ui** (Componentes acessíveis)
+- **Lucide React** (Ícones SVG)
+- **Zustand** (State Management)
+- **Axios** (HTTP Client)
+- **next-themes** (Temas dinâmicos)
+- **ESLint, Prettier, Husky** (Qualidade de código)
+
+---
+
+## 📁 Estrutura do Projeto
+
+```text
+├── app/                # Rotas e páginas (Next.js App Router)
+├── components/         # Componentes React reutilizáveis
+│   ├── ui/             # Base shadcn/ui
+│   ├── forms/          # Formulários (Fields, Labels)
+│   ├── buttons/        # Botões e variações
+│   ├── navigation/     # Breadcrumbs, Menus
+│   ├── feedback/       # Alerts, Tooltips, Avatars
+│   ├── layout/         # Header, Footer
+│   └── theme-provider.tsx # Contexto de tema
+├── hooks/              # Custom hooks reutilizáveis
+├── store/              # Zustand stores (auth, user, campaign)
+├── lib/                # Helpers, utils, configs
+├── styles/             # Tailwind, temas, CSS global
+├── public/             # Imagens, ícones, assets
+├── docs/               # Documentação técnica e exemplos
+├── middleware.ts       # Proteção de rotas global
+├── next.config.ts      # Configuração Next.js
+├── tailwind.config.js  # Configuração Tailwind
+├── package.json        # Dependências e scripts
+└── README.md           # Visão geral do projeto
+```
+
+---
+
+## 🎨 Componentes
+
+Os componentes são organizados por categoria para facilitar a escalabilidade e manutenção. Todos são escritos em TypeScript, memoizados e seguem padrões de acessibilidade e responsividade.
+
+**Principais categorias:**
+
+- `ui/`: Base shadcn/ui (Button, Input, Dialog, Calendar, Tooltip...)
+- `forms/`: Campos e labels de formulários
+- `buttons/`: Botões customizados
+- `navigation/`: Breadcrumbs, Paginação
+- `feedback/`: Alertas, Tooltips, Avatares
+- `layout/`: Header, Footer
+
+**Exemplo de uso:**
+
+```tsx
+import { TooltipWrapper, Avatar } from '@/components/feedback';
+import { Input, DatePicker } from '@/components/forms/Fields';
+import { ButtonWithIcon } from '@/components/buttons';
+
+<TooltipWrapper content="Dica útil">
+  <ButtonWithIcon icon={<Save />}>Salvar</ButtonWithIcon>
+</TooltipWrapper>;
+```
+
+Consulte o README de cada subpasta para detalhes e exemplos específicos.
+
+---
+
+## 🏗️ Arquitetura
+
+O projeto segue arquitetura em camadas:
+
+```
+┌──────────── Presentation ────────────┐
+│  🎨 Components • 📱 Pages • UI State │
+├──────────── Business ────────────────┤
+│  🧠 Custom Hooks • State Logic       │
+├───────────── Data ───────────────────┤
+│  🌐 API Calls • Data Fetching        │
+├───────── Infrastructure ─────────────┤
+│  ⚙️ Next.js • Tailwind • Tooling     │
+└──────────────────────────────────────┘
+```
+
+**Princípios:**
+
+- Componentização, tipagem forte, performance, DX, manutenibilidade.
+
+---
+
+## 🔄 State Management & Hooks
+
+- **Zustand** para stores centralizados (`store/`)
+- **Custom hooks** para lógica reutilizável (`hooks/`)
+
+**Exemplo de hook:**
+
+```tsx
+const useUser = () => {
+  const user = useUserStore((s) => s.user);
+  // ... lógica customizada
+  return user;
+};
+```
+
+---
+
+## 🎨 Temas & Design Tokens
+
+- **next-themes** para dark/light mode
+- **Tailwind CSS** com design tokens customizados
+
+**Exemplo:**
+
+```tsx
+<ThemeProvider attribute="class" defaultTheme="system">
+  <App />
+</ThemeProvider>
+```
+
+---
+
+## 📝 Convenções & Boas Práticas
+
+- Componentes em PascalCase, hooks em camelCase
+- Sempre usar TypeScript e tipar props
+- Memoização (`memo`, `useMemo`, `useCallback`)
+- Barrel exports (`index.ts`)
+- Imports organizados (externos, internos, relativos)
+- Classes Tailwind sempre por último no `className`
+- Documentação e exemplos em todos os componentes
+
+---
+
+## 🧪 Testes
+
+- Estrutura preparada para testes unitários e de hooks
+- Exemplo com Testing Library disponível em cada categoria
+
+---
+
+## 💻 Comandos Úteis
+
+```bash
+# Desenvolvimento
+npm run dev
+
+# Build de produção
+npm run build
+
+# Lint, format, type-check
+npm run check-all
+
+# Análise de bundle
+npm run build:analyze
+
+# Limpeza
+npm run clean
+```
+
+---
+
+## 📚 Documentação & Links Úteis
+
+- [README do Projeto](../README.md)
+- [Guia do Desenvolvedor](../docs/guides/DEVELOPER_GUIDE.md)
+- [Comandos do Projeto](../docs/guides/COMMANDS.md)
+- [Arquitetura Técnica](../docs/architecture/ARCHITECTURE.md)
+- [Exemplos de API](../docs/examples/API_EXAMPLES.md)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Next.js](https://nextjs.org/docs)
+- [TypeScript](https://www.typescriptlang.org/docs/)
+
+---
+
+## 🤝 Contribuindo
+
+1. Fork o projeto
+2. Crie uma branch para sua feature
+3. Commit com mensagem clara
+4. PR com descrição objetiva
+
+---
+
+**Dúvidas? Consulte a documentação acima ou abra uma issue!**
