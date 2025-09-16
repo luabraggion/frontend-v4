@@ -2,6 +2,7 @@ import { Label } from '@/components/forms/Labels';
 import { Button } from '@/components/ui/button';
 import { Input as UIInput } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/ui';
 import {
   applyDateMask,
   formatDate,
@@ -23,6 +24,7 @@ interface DatePickerProps {
   placeholder?: string;
   fromYear?: number;
   toYear?: number;
+  className?: string;
 }
 
 export const DatePicker = ({
@@ -33,6 +35,7 @@ export const DatePicker = ({
   placeholder = 'DD/MM/AAAA',
   fromYear,
   toYear,
+  className,
 }: DatePickerProps) => {
   // Estados internos para controle da data e valor do input
   const [internalDate, setInternalDate] = useState<Date | undefined>(dateProp);
@@ -152,7 +155,7 @@ export const DatePicker = ({
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
-              className="pr-10"
+              className={cn('pr-10', className)}
               maxLength={10}
             />
 

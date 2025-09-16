@@ -18,6 +18,8 @@ export interface AlertDialogWrapperProps {
   trigger: ReactNode;
   /** Título do dialog */
   title: ReactNode;
+  /** Ícone opcional para exibir acima do título */
+  icon?: ReactNode;
   /** Descrição/conteúdo do dialog */
   description?: ReactNode;
   /** Texto do botão de cancelar */
@@ -56,6 +58,7 @@ export interface AlertDialogWrapperProps {
 export const AlertDialogWrapper = ({
   trigger,
   title,
+  icon,
   description,
   cancelText = 'Cancelar',
   actionText = 'Confirmar',
@@ -83,10 +86,17 @@ export const AlertDialogWrapper = ({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-      <AlertDialogContent className={className}>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
+      <AlertDialogContent className={cn('text-center', className)}>
+        <AlertDialogHeader className="flex flex-col items-center justify-center">
+          {icon && <div className="mb-2 flex justify-center w-full text-4xl">{icon}</div>}
+          <AlertDialogTitle className="w-full flex justify-center items-center text-center">
+            {title}
+          </AlertDialogTitle>
+          {description && (
+            <AlertDialogDescription className="w-full flex justify-center items-center text-center mt-1">
+              {description}
+            </AlertDialogDescription>
+          )}
         </AlertDialogHeader>
 
         <AlertDialogFooter>
@@ -95,7 +105,11 @@ export const AlertDialogWrapper = ({
           ) : (
             <>
               {showCancel && (
-                <AlertDialogCancel onClick={handleCancel} disabled={isLoading}>
+                <AlertDialogCancel
+                  onClick={handleCancel}
+                  disabled={isLoading}
+                  className="focus-within:outline-none"
+                >
                   {cancelText}
                 </AlertDialogCancel>
               )}
@@ -104,7 +118,7 @@ export const AlertDialogWrapper = ({
                   onClick={handleAction}
                   className={cn(
                     actionVariant === 'warning'
-                      ? 'bg-warning text-warning-foreground shadow-xs hover:bg-warning/90 focus-visible:ring-warning/20 dark:focus-visible:ring-warning/40'
+                      ? 'bg-warning text-white shadow-xs hover:bg-warning/90 focus-visible:ring-warning/20 dark:focus-visible:ring-warning/40'
                       : buttonVariants({
                           variant: actionVariant as
                             | 'default'

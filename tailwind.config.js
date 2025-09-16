@@ -4,6 +4,7 @@ export const theme = {
     fontFamily: {
       sans: ['var(--font-sans)', 'Manrope', 'sans-serif'],
       display: ['var(--font-display)', 'sans-serif'],
+      gordita: ['Gordita', 'var(--font-sans)', 'sans-serif'],
     },
   },
 };

@@ -1,4 +1,6 @@
 import { Footer } from '@/components/layout';
+import HeaderWithTitle from '@/components/layout/HeaderWithTitle';
+import { PageTitleProvider } from '@/components/PageTitleContext';
 import { ThemeProvider } from '@/components/theme-provider';
 import type { Metadata } from 'next';
 import { Fira_Sans, Manrope } from 'next/font/google';
@@ -41,10 +43,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex min-h-screen flex-col">
-            <main className="flex-1">{children}</main>
-            <Footer companyName="Big2be." version="4.0.0" />
-          </div>
+          <PageTitleProvider>
+            <div className="flex min-h-screen flex-col bg-gray-100 w-full px-10 pt-10 space-y-10">
+              <HeaderWithTitle />
+              <main className="flex-1">{children}</main>
+              <Footer companyName="Big2be." version="4.0.0" className="bg-transparent" />
+            </div>
+          </PageTitleProvider>
         </ThemeProvider>
       </body>
     </html>

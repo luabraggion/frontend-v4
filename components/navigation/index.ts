@@ -8,4 +8,3 @@ export {
   PaginationNext,
   PaginationPrevious,
 } from './Pagination';
-export { PaginationWrapper } from './PaginationWrapper';

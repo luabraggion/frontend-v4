@@ -153,7 +153,7 @@ export const Input = memo<InputProps>(
     );
 
     return (
-      <div className={cn('flex flex-col gap-2 flex-grow w-full', containerClassName)}>
+      <div className={cn('flex flex-col gap-3 flex-grow w-full', containerClassName)}>
         {/* Label */}
         {!hideLabel && (
           <UILabel htmlFor={inputId} className={labelClasses}>
@@ -167,36 +167,34 @@ export const Input = memo<InputProps>(
         )}
 
         {/* Container do Input */}
-        <div className="relative">
-          {/* Ícone Prefix */}
-          {prefixIcon && (
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-              {prefixIcon}
-            </div>
-          )}
+        {/* Ícone Prefix */}
+        {prefixIcon && (
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+            {prefixIcon}
+          </div>
+        )}
 
-          {/* Input */}
-          <UIInput
-            id={inputId}
-            name={name}
-            type={type}
-            placeholder={placeholder}
-            className={inputClasses}
-            aria-invalid={hasError}
-            aria-describedby={
-              cn(helpText && `${inputId}-help`, error && `${inputId}-error`) || undefined
-            }
-            required={required}
-            {...props}
-          />
+        {/* Input */}
+        <UIInput
+          id={inputId}
+          name={name}
+          type={type}
+          placeholder={placeholder}
+          className={inputClasses}
+          aria-invalid={hasError}
+          aria-describedby={
+            cn(helpText && `${inputId}-help`, error && `${inputId}-error`) || undefined
+          }
+          required={required}
+          {...props}
+        />
 
-          {/* Ícone Suffix */}
-          {suffixIcon && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-              {suffixIcon}
-            </div>
-          )}
-        </div>
+        {/* Ícone Suffix */}
+        {suffixIcon && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+            {suffixIcon}
+          </div>
+        )}
 
         {/* Texto de ajuda */}
         {helpText && !error && (

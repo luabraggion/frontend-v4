@@ -1,3 +1,5 @@
+// Config ESLint sem Storybook
+
 import { FlatCompat } from '@eslint/eslintrc';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -56,8 +58,7 @@ const eslintConfig = [
       'no-duplicate-imports': 'error',
       'no-unused-expressions': 'error',
     },
-  },
-  // 📁 Configurações específicas por tipo de arquivo
+  }, // 📁 Configurações específicas por tipo de arquivo
   {
     files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
     rules: {

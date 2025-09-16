@@ -2,7 +2,8 @@
 
 import { cn } from '@/lib/ui';
 import Image from 'next/image';
-import { memo, useMemo, type ReactNode } from 'react';
+import { memo, useMemo } from 'react';
+import { Avatar } from '../feedback';
 import { BreadcrumbNavigation } from '../navigation';
 
 interface HeaderProps {
@@ -13,7 +14,7 @@ interface HeaderProps {
   title?: string;
   /**
    * URL da logo/imagem
-   * @default "/logo.webp"
+   * @default "/images/logo.png"
    */
   logoSrc?: string;
   /**
@@ -44,10 +45,6 @@ interface HeaderProps {
    */
   hideBreadcrumb?: boolean;
   /**
-   * Conteúdo adicional no lado direito do header
-   */
-  rightContent?: ReactNode;
-  /**
    * Classes CSS customizadas
    */
   className?: string;
@@ -56,11 +53,6 @@ interface HeaderProps {
    * @default "2xl"
    */
   titleSize?: 'lg' | 'xl' | '2xl' | '3xl';
-  /**
-   * Se true, centraliza o conteúdo
-   * @default false
-   */
-  centered?: boolean;
   /**
    * Callback executado ao clicar na logo/título
    */
@@ -101,7 +93,7 @@ const titleSizeConfig = {
 export const Header = memo<HeaderProps>(
   ({
     title = 'Benefícios',
-    logoSrc = '/logo.webp',
+    logoSrc = '/images/logo.png',
     logoAlt,
     logoWidth = 30,
     logoHeight = 30,
@@ -110,21 +102,14 @@ export const Header = memo<HeaderProps>(
       { label: 'Benefícios', isCurrent: true },
     ],
     hideBreadcrumb = false,
-    rightContent,
     className,
     titleSize = '2xl',
-    centered = false,
     onLogoClick,
   }) => {
     // Memoiza as classes do header
     const headerClasses = useMemo(
-      () =>
-        cn(
-          'flex items-center w-full border-b pb-10',
-          centered ? 'justify-center' : 'justify-between',
-          className,
-        ),
-      [centered, className],
+      () => cn('flex items-center w-full border-b pb-6 justify-between', className),
+      [className],
     );
 
     // Memoiza as classes do título
@@ -163,25 +148,16 @@ export const Header = memo<HeaderProps>(
           <h1 className={titleClasses}>{title}</h1>
         </LogoWrapper>
 
-        {/* Conteúdo do meio - para futuras expansões */}
-        {centered && !hideBreadcrumb && breadcrumbItems.length > 0 && (
-          <div className="absolute left-1/2 transform -translate-x-1/2">
-            <BreadcrumbNavigation items={breadcrumbItems} />
-          </div>
-        )}
-
-        {/* Lado direito - Breadcrumb ou conteúdo customizado */}
-        {!centered && (
-          <div className="flex items-center gap-4">
-            {!hideBreadcrumb && breadcrumbItems.length > 0 && (
+        {/* Lado direito - Breadcrumb */}
+        <div className="flex items-center gap-4">
+          {!hideBreadcrumb && breadcrumbItems.length > 0 && (
+            <>
               <BreadcrumbNavigation items={breadcrumbItems} />
-            )}
-            {rightContent}
-          </div>
-        )}
-
-        {/* Conteúdo direito quando centralizado */}
-        {centered && rightContent && <div className="absolute right-0">{rightContent}</div>}
+              <div className="h-6 border-l border-border" />
+              <Avatar size="sm" />
+            </>
+          )}
+        </div>
       </header>
     );
   },
@@ -189,15 +165,9 @@ export const Header = memo<HeaderProps>(
 
 Header.displayName = 'Header';
 
-// Variações pré-configuradas
+// Variação pré-configurada
 export const SimpleHeader = memo<Pick<HeaderProps, 'title' | 'onLogoClick' | 'className'>>(
   (props) => <Header hideBreadcrumb {...props} />,
 );
 
 SimpleHeader.displayName = 'SimpleHeader';
-
-export const CenteredHeader = memo<Omit<HeaderProps, 'centered'>>((props) => (
-  <Header centered {...props} />
-));
-
-CenteredHeader.displayName = 'CenteredHeader';

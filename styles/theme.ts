@@ -18,6 +18,8 @@ export const themes = {
       border: 'oklch(0.928 0.006 264.531)',
       input: 'oklch(0.928 0.006 264.531)',
       ring: 'oklch(0.707 0.022 261.325)',
+      warning: 'oklch(0.704 0.191 82.216)',
+      warningForeground: 'oklch(0.13 0.028 261.692)',
     },
   },
   dark: {
@@ -38,6 +40,8 @@ export const themes = {
       border: 'oklch(1 0 0 / 10%)',
       input: 'oklch(1 0 0 / 15%)',
       ring: 'oklch(0.551 0.027 264.364)',
+      warning: 'oklch(0.704 0.191 82.216)',
+      warningForeground: 'oklch(0.985 0.002 247.839)',
     },
   },
 } as const;
@@ -114,6 +118,7 @@ export const typography = {
   fontFamily: {
     sans: ['Manrope', 'Arial', 'Helvetica', 'sans-serif'],
     display: ['Fira Sans', 'Arial', 'Helvetica', 'sans-serif'],
+    gorditas: ['Gordita', 'Arial', 'Helvetica', 'sans-serif'],
   },
   fontSize: {
     xs: '0.75rem', // 12px

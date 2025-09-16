@@ -1,3 +1,6 @@
+// Este arquivo centraliza e reexporta todos os componentes de feedback do sistema,
+// como tooltips, badges, alerts, dialogs e tabelas dinâmicas, facilitando o import
+// único e organizado em outras partes da aplicação.
 export {
   TooltipError,
   TooltipInfo,
@@ -23,9 +26,6 @@ export {
 export { DynamicTable } from './DynamicTable';
 export type { DynamicTableProps, TableColumn, TableFooterColumn } from './DynamicTable';
 
-export { PaginatedTable } from './PaginatedTable';
-export type { PaginatedTableProps } from './PaginatedTable';
-
 export {
   AlertDialogWrapper,
   ConfirmDialog,
@@ -46,3 +46,7 @@ export {
   DialogTitle,
   DialogTrigger,
 } from './Dialog';
+
+// Roleta performática
+export { Wheel } from './Wheel';
+export type { WheelOption, WheelProps } from './Wheel';
