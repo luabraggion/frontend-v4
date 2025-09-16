@@ -2,6 +2,7 @@ import { Footer } from '@/components/layout';
 import HeaderWithTitle from '@/components/layout/HeaderWithTitle';
 import { PageTitleProvider } from '@/components/PageTitleContext';
 import { ThemeProvider } from '@/components/theme-provider';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Fira_Sans, Manrope } from 'next/font/google';
 import '../styles/globals.css';
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <Footer companyName="Big2be." version="4.0.0" className="bg-transparent" />
             </div>
           </PageTitleProvider>
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
