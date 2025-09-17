@@ -31,7 +31,8 @@ else
 fi
 
 CHANGED_TS=$(git diff --name-only $BASE_RANGE -- '*.ts' '*.tsx' || true)
-CHANGED_LINT=$(git diff --name-only $BASE_RANGE -- '*.js' '*.jsx' '*.ts' '*.tsx' '*.json' '*.md' '*.css' '*.mjs' '*.cjs' '*.yml' '*.yaml' || true)
+# Apenas arquivos relevantes para ESLint (JS/TS)
+CHANGED_ESLINT=$(git diff --name-only $BASE_RANGE -- '*.js' '*.jsx' '*.ts' '*.tsx' '*.mjs' '*.cjs' || true)
 
 # Executar type-check se houver arquivos TS alterados
 if [ -n "$CHANGED_TS" ]; then
@@ -50,21 +51,43 @@ else
   echo "ℹ️  Nenhuma alteração TS detectada — pulando type-check"
 fi
 
-# Executar lint se houver arquivos relevantes alterados
-if [ -n "$CHANGED_LINT" ]; then
-  echo "🔎 ESLint (alterações relevantes detectadas)..."
-  if [ -x "./node_modules/.bin/eslint" ]; then
-    ./node_modules/.bin/eslint . --ext .js,.jsx,.ts,.tsx
+# Executar ESLint apenas nos arquivos JS/TS alterados e existentes
+if [ -n "$CHANGED_ESLINT" ]; then
+  echo "🔎 ESLint (arquivos JS/TS alterados detectados)..."
+  # Construir lista segura de arquivos existentes
+  ESLINT_FILES=""
+  # IFS em newline para preservar espaços no nome dos arquivos
+  IFS='\n'
+  for f in $CHANGED_ESLINT; do
+    if [ -f "$f" ]; then
+      # Envolver em aspas ao invocar
+      if [ -z "$ESLINT_FILES" ]; then
+        ESLINT_FILES="$f"
+      else
+        ESLINT_FILES="$ESLINT_FILES\n$f"
+      fi
+    fi
+  done
+  unset IFS
+
+  if [ -z "$ESLINT_FILES" ]; then
+    echo "ℹ️  Nenhum arquivo JS/TS existente para lint — pulando ESLint"
   else
-    if command -v npx >/dev/null 2>&1; then
-      npx --no-install eslint . --ext .js,.jsx,.ts,.tsx 2>/dev/null || npx eslint . --ext .js,.jsx,.ts,.tsx
+    # Invocar eslint com lista de arquivos; usar xargs para lidar com quebras de linha de forma segura
+    if [ -x "./node_modules/.bin/eslint" ]; then
+      printf "%b" "$ESLINT_FILES" | xargs ./node_modules/.bin/eslint --max-warnings=0 --report-unused-disable-directives
     else
-      echo "❌ eslint não encontrado. Instale as dependências."
-      exit 1
+      if command -v npx >/dev/null 2>&1; then
+        printf "%b" "$ESLINT_FILES" | xargs npx --no-install eslint --max-warnings=0 --report-unused-disable-directives 2>/dev/null \
+          || printf "%b" "$ESLINT_FILES" | xargs npx eslint --max-warnings=0 --report-unused-disable-directives
+      else
+        echo "❌ eslint não encontrado. Instale as dependências."
+        exit 1
+      fi
     fi
   fi
 else
-  echo "ℹ️  Nenhuma alteração relevante de lint — pulando ESLint"
+  echo "ℹ️  Nenhuma alteração JS/TS detectada — pulando ESLint"
 fi
 
 echo "✅ Pre-push finalizado com sucesso!"
