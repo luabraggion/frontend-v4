@@ -2,19 +2,22 @@ import { FlatCompat } from '@eslint/eslintrc';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+// Flat Config para ESLint v9, espelhando .eslintrc.cjs via FlatCompat
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 const compat = new FlatCompat({ baseDirectory: __dirname });
 
 export default [
   ...compat.config({
-    extends: ['next/core-web-vitals', 'next/typescript'],
-    plugins: ['@next/next'],
-  }),
-  ...compat.extends('prettier'),
-  {
-    ignores: [
+    root: true,
+    extends: [
+      'next/core-web-vitals',
+      'next/typescript',
+      'plugin:@typescript-eslint/recommended',
+      'prettier',
+    ],
+    plugins: ['@next/next', '@typescript-eslint'],
+    ignorePatterns: [
       'node_modules/**',
       '.next/**',
       'out/**',
@@ -25,8 +28,6 @@ export default [
       '*.config.ts',
       '*.config.mjs',
     ],
-  },
-  {
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -34,7 +35,6 @@ export default [
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/display-name': 'off',
-      'react-hooks/exhaustive-deps': 'warn',
       '@next/next/no-html-link-for-pages': 'error',
       '@next/next/no-img-element': 'error',
       'prefer-const': 'error',
@@ -44,18 +44,20 @@ export default [
       'no-duplicate-imports': 'error',
       'no-unused-expressions': 'error',
     },
-  },
-  {
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      'no-console': 'off',
-    },
-  },
-  {
-    files: ['**/page.tsx', '**/layout.tsx', '**/loading.tsx', '**/error.tsx'],
-    rules: {
-      'react/display-name': 'off',
-    },
-  },
+    overrides: [
+      {
+        files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+        rules: {
+          '@typescript-eslint/no-explicit-any': 'off',
+          'no-console': 'off',
+        },
+      },
+      {
+        files: ['**/page.tsx', '**/layout.tsx', '**/loading.tsx', '**/error.tsx'],
+        rules: {
+          'react/display-name': 'off',
+        },
+      },
+    ],
+  }),
 ];
