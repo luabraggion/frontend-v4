@@ -1,4 +1,4 @@
-
+#!/usr/bin/env sh
 # 🎯 Pre-commit hook: Executa lint-staged
 # Verifica e corrige código antes de cada commit
 # 🎯 Pre-commit hook: Executa lint-staged
