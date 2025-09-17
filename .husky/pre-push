@@ -1,0 +1,70 @@
+#!/usr/bin/env sh
+
+# 🚀 Pre-push hook: checagens rápidas antes do push
+# - Fail-fast e mensagens claras
+# - Skip via SKIP_PREPUSH=1
+# - Executa type-check e lint incrementais
+
+set -eu
+
+echo "🚀 Executando checagens de pre-push..."
+
+# Permitir pular o hook via variável de ambiente
+if [ "${SKIP_PREPUSH:-}" = "1" ]; then
+  echo "⏭️  SKIP_PREPUSH=1 — pulando pre-push"
+  exit 0
+fi
+
+# Garantir que estamos em um repositório Git
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "ℹ️  Fora de um repositório Git — nada a fazer"
+  exit 0
+fi
+
+# Determinar diff contra upstream para contexto do push
+# Tenta identificar a branch upstream; fallback para HEAD~1
+UPSTREAM_REF=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "")
+if [ -n "$UPSTREAM_REF" ]; then
+  BASE_RANGE="$UPSTREAM_REF..HEAD"
+else
+  BASE_RANGE="HEAD~1..HEAD"
+fi
+
+CHANGED_TS=$(git diff --name-only $BASE_RANGE -- '*.ts' '*.tsx' || true)
+CHANGED_LINT=$(git diff --name-only $BASE_RANGE -- '*.js' '*.jsx' '*.ts' '*.tsx' '*.json' '*.md' '*.css' '*.mjs' '*.cjs' '*.yml' '*.yaml' || true)
+
+# Executar type-check se houver arquivos TS alterados
+if [ -n "$CHANGED_TS" ]; then
+  echo "🧪 Type-check (arquivos TS alterados detectados)..."
+  if [ -x "./node_modules/.bin/tsc" ]; then
+    ./node_modules/.bin/tsc --noEmit
+  else
+    if command -v npx >/dev/null 2>&1; then
+      npx --no-install tsc --noEmit 2>/dev/null || npx tsc --noEmit
+    else
+      echo "❌ tsc não encontrado. Instale as dependências."
+      exit 1
+    fi
+  fi
+else
+  echo "ℹ️  Nenhuma alteração TS detectada — pulando type-check"
+fi
+
+# Executar lint se houver arquivos relevantes alterados
+if [ -n "$CHANGED_LINT" ]; then
+  echo "🔎 ESLint (alterações relevantes detectadas)..."
+  if [ -x "./node_modules/.bin/eslint" ]; then
+    ./node_modules/.bin/eslint . --ext .js,.jsx,.ts,.tsx
+  else
+    if command -v npx >/dev/null 2>&1; then
+      npx --no-install eslint . --ext .js,.jsx,.ts,.tsx 2>/dev/null || npx eslint . --ext .js,.jsx,.ts,.tsx
+    else
+      echo "❌ eslint não encontrado. Instale as dependências."
+      exit 1
+    fi
+  fi
+else
+  echo "ℹ️  Nenhuma alteração relevante de lint — pulando ESLint"
+fi
+
+echo "✅ Pre-push finalizado com sucesso!"
