@@ -1,0 +1,204 @@
+# ===============================================
+# Docker
+# ===============================================
+Dockerfile
+docker-compose.yml
+.dockerignore
+.docker/
+docker/
+
+# ===============================================
+# Storybook
+# ===============================================
+storybook-static/
+.storybook/
+*.story.tsx
+*.stories.tsx
+*.stories.mdx
+# .gitignore otimizado para projetos Next.js
+# Consulte https://help.github.com/articles/ignoring-files/ para mais informações
+
+# ===============================================
+# Dependências e Gerenciadores de Pacotes
+# ===============================================
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+.pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# ===============================================
+# Arquivos de Build do Next.js
+# ===============================================
+/.next/
+/out/
+/dist/
+/.output/
+
+# Cache do Next.js
+.next/cache/
+
+# Cache do Turbopack (bundler do Next.js)
+.turbo/
+
+# ===============================================
+# Testes e Cobertura
+# ===============================================
+/coverage
+/coverage-report
+/.nyc_output
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# ===============================================
+# Variáveis de Ambiente
+# ===============================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Mantém templates de exemplo das variáveis de ambiente
+!.env.example
+!.env.template
+
+# ===============================================
+# Logs e Arquivos de Debug
+# ===============================================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# Logs de execução
+logs
+*.log
+
+# ===============================================
+# Arquivos do Sistema Operacional
+# ===============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+Desktop.ini
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ===============================================
+# IDEs e Editores de Código
+# ===============================================
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains (WebStorm, IntelliJ)
+.idea/
+*.swp
+*.swo
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# ===============================================
+# TypeScript
+# ===============================================
+*.tsbuildinfo
+next-env.d.ts
+
+# ===============================================
+# Build e Produção
+# ===============================================
+/build
+/dist
+/public/build
+/static/build
+
+# ===============================================
+# Analytics e Monitoramento
+# ===============================================
+.vercel
+.netlify
+.firebase
+
+# Analisador de bundle
+.bundle-analyzer/
+
+# ===============================================
+# Arquivos Temporários
+# ===============================================
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# Cache de otimização de imagens
+.cache/images/
+
+# ===============================================
+# Banco de Dados e Armazenamento Local
+# ===============================================
+*.db
+*.sqlite
+*.sqlite3
+/prisma/migrations/**/migration.sql
+
+# ===============================================
+# Segurança e Certificados
+# ===============================================
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+
+# ===============================================
+# Arquivos Específicos do Projeto
+# ===============================================
+# Adicione aqui ignorados específicos do seu projeto
+
+# Scripts de conversão de imagem (temporários)
+convert-*.js
+optimize-*.js
+
+# Arquivos de backup
+*.backup
+*.bak
+*.orig
+
+# Builds de documentação
+/docs/build
+/docs/.docusaurus
+
+*storybook.log

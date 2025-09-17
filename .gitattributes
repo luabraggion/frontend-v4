@@ -1,0 +1,19 @@
+# Normalize line endings to LF across the repo
+* text=auto eol=lf
+
+# Common binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.otf binary
+
+# Keep shell scripts with LF
+*.sh text eol=lf

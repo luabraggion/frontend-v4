@@ -1,0 +1,43 @@
+#!/usr/bin/env sh
+
+# 🎯 Pre-commit hook: Executa lint-staged (fail-fast)
+# - Pula execução se não houver arquivos staged
+# - Usa binário local quando disponível, com fallback para npx
+# - Permite pular via SKIP_PRECOMMIT=1 ou SKIP_LINT_STAGED=1
+
+set -eu
+
+echo "🔍 Executando verificações de qualidade (pre-commit)..."
+
+# Permitir pular o hook via variável de ambiente
+if [ "${SKIP_PRECOMMIT:-}" = "1" ] || [ "${SKIP_LINT_STAGED:-}" = "1" ]; then
+	echo "⏭️  SKIP_PRECOMMIT/SKIP_LINT_STAGED ativo — pulando lint-staged"
+	exit 0
+fi
+
+# Garantir que estamos em um repositório Git
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+	echo "ℹ️  Fora de um repositório Git — nada a fazer"
+	exit 0
+fi
+
+# Executar apenas se houver arquivos staged
+if [ -z "$(git diff --name-only --cached)" ]; then
+	echo "ℹ️  Nenhum arquivo staged — pulando lint-staged"
+	exit 0
+fi
+
+# Preferir binário local do lint-staged
+if [ -x "./node_modules/.bin/lint-staged" ]; then
+	./node_modules/.bin/lint-staged
+else
+	# Tentar npx sem instalar; se falhar, usar npx padrão
+	if command -v npx >/dev/null 2>&1; then
+		npx --no-install lint-staged 2>/dev/null || npx lint-staged
+	else
+		echo "❌ npx não encontrado e lint-staged local ausente."
+		exit 1
+	fi
+fi
+
+echo "✅ Código verificado e corrigido!"

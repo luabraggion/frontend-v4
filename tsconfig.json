@@ -1,0 +1,52 @@
+{
+  // Configurações do compilador TypeScript
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    // Versão do ECMAScript compatível com Node.js 22
+    "target": "ES2023",
+    // Bibliotecas disponíveis globalmente (inclui DOM e ES2023)
+    "lib": ["dom", "dom.iterable", "es2023"],
+    // Permite arquivos JavaScript no projeto
+    "allowJs": true,
+    // Ignora checagem de tipos em arquivos de declaração de bibliotecas
+    "skipLibCheck": true,
+    // Ativa verificações estritas de tipo
+    "strict": true,
+    // Não gera arquivos de saída (apenas checagem)
+    "noEmit": true,
+    // Permite importação de módulos CommonJS
+    "esModuleInterop": true,
+    // Permite importações default mesmo sem export default explícito
+    "allowSyntheticDefaultImports": true,
+    // Garante consistência de maiúsculas/minúsculas nos imports
+    "forceConsistentCasingInFileNames": true,
+    // Usa 'unknown' em variáveis de catch para maior segurança
+    "useUnknownInCatchVariables": true,
+    // Sistema de módulos ES2022 compatível com bundler resolution
+    "module": "esnext",
+    // Resolução de módulos compatível com Next.js moderno
+    "moduleResolution": "bundler",
+    // Permite importar arquivos .json
+    "resolveJsonModule": true,
+    // Garante que cada arquivo seja tratado como um módulo isolado
+    "isolatedModules": true,
+    // Suporte a JSX (mantém JSX para processamento posterior)
+    "jsx": "preserve",
+    // Habilita builds incrementais
+    "incremental": true,
+    // Plugin do Next.js para melhor integração
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    // Alias de caminhos para importações
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  // Arquivos incluídos na compilação
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  // Pastas/arquivos excluídos da compilação
+  "exclude": ["node_modules"]
+}
