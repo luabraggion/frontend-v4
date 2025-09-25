@@ -34,7 +34,7 @@ export default function NotFound() {
                 className="object-contain"
                 priority
               />
-              <span className="align-middle bg-linear-to-r from-yellow-300 to-amber-600 bg-clip-text font-extrabold text-transparent">
+              <span className="align-middle bg-gradient-to-r from-yellow-300 to-amber-600 bg-clip-text font-extrabold text-transparent">
                 404
               </span>
             </h1>

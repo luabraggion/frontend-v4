@@ -14,7 +14,7 @@ interface DrawerProps {
   actions?: ReactNode;
 }
 
-export default function Drawer({
+function Drawer({
   open = false,
   onClose,
   title = 'Panel title',
@@ -68,3 +68,5 @@ export default function Drawer({
     </Dialog>
   );
 }
+
+export { Drawer };

@@ -1,3 +1,4 @@
+import { cn } from '@/lib';
 import { ReactNode } from 'react';
 
 // Propriedades aceitas pelo componente Label
@@ -28,10 +29,10 @@ export function Label({ children, htmlFor, className = '' }: LabelProps) {
     return (
       <label
         htmlFor={htmlFor}
-        className={
-          'text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 ' +
-          className
-        }
+        className={cn(
+          'text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
+          className,
+        )}
       >
         {children}
       </label>

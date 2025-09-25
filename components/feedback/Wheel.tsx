@@ -184,7 +184,7 @@ const Wheel: React.FC<WheelProps> = ({
     // elevar o ponteiro reduzindo a coordenada Y do topo e aproximando a ponta
     const pointerY = 0;
     const pointerTip = pointerSize * 1.5;
-    ctx.fillStyle = '#f6f3f4';
+    ctx.fillStyle = '#FFFFFF';
     ctx.beginPath();
     ctx.moveTo(w / 2 - pointerSize, pointerY);
     ctx.lineTo(w / 2 + pointerSize, pointerY);

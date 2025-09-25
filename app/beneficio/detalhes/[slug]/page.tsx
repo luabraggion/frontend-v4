@@ -2,7 +2,8 @@
 
 import RoletaCanvas from '@/app/RoletaCanvas';
 import { Button } from '@/components/buttons';
-import Drawer from '@/components/drawers';
+import { Drawer } from '@/components/Drawer';
+import { Breadcrumb } from '@/components/layout';
 import { usePageTitle } from '@/components/PageTitleContext';
 import { useEffect, useRef, useState } from 'react';
 
@@ -14,9 +15,11 @@ export default function DetalhesPage() {
 
   const spinRef = useRef<((opts?: { forceIndex?: number }) => void) | null>(null);
 
+  const pageTitle = 'Detalhes de Benefícios';
+
   useEffect(() => {
-    setTitle('Detalhes de Benefícios');
-  }, [setTitle]);
+    setTitle(pageTitle);
+  }, [setTitle, pageTitle]);
 
   const optionsRolueta = [
     { label: 'Prêmio 1', color: '#ff914d' },
@@ -33,6 +36,14 @@ export default function DetalhesPage() {
 
   return (
     <div>
+      {/* Define o breadcrumb para esta página */}
+      <Breadcrumb
+        items={[
+          { label: 'Início', href: '/' },
+          { label: 'Benefícios', href: '/' },
+          { label: pageTitle, href: '/', isCurrent: true },
+        ]}
+      />
       <header className="mb-6">
         <h2 id="description-heading" className="text-xl font-bold tracking-tight">
           Engajamento de Clientes

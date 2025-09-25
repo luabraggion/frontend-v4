@@ -6,7 +6,7 @@ import { Button as ShadcnButton } from '@/components/ui/button';
 import { cn } from '@/lib/ui';
 
 /**
- * Extended button variants que adiciona a variante warning
+ * Extended button variants que adiciona as variantes warning e info
  * sem modificar o componente base do shadcn/ui
  */
 const extendedButtonVariants = cva(
@@ -19,6 +19,7 @@ const extendedButtonVariants = cva(
           'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
         warning:
           'bg-warning text-white shadow-xs hover:bg-warning/90 focus-visible:ring-warning/20 dark:focus-visible:ring-warning/40',
+        info: 'bg-blue-100 text-blue-500 shadow-xs hover:bg-blue-100/75 focus-visible:ring-blue-200/20 dark:focus-visible:ring-blue-200/40',
         outline:
           'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
         secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
@@ -43,6 +44,7 @@ type ExtendedVariant =
   | 'default'
   | 'destructive'
   | 'warning'
+  | 'info'
   | 'outline'
   | 'secondary'
   | 'ghost'
@@ -57,7 +59,7 @@ interface ExtendedButtonProps extends Omit<React.ComponentProps<'button'>, 'vari
 }
 
 /**
- * Button component que estende o shadcn/ui Button com suporte à variante warning
+ * Button component que estende o shadcn/ui Button com suporte às variantes warning e info
  *
  * @example
  * ```tsx
@@ -65,8 +67,9 @@ interface ExtendedButtonProps extends Omit<React.ComponentProps<'button'>, 'vari
  * <Button variant="default">Botão Padrão</Button>
  * <Button variant="destructive">Botão Destrutivo</Button>
  *
- * // Variante warning (usa customização)
+ * // Variantes customizadas
  * <Button variant="warning">Botão Warning</Button>
+ * <Button variant="info">Botão Info</Button>
  * ```
  */
 function Button({
@@ -77,8 +80,8 @@ function Button({
   children,
   ...props
 }: ExtendedButtonProps) {
-  // Se não for warning, usar o componente shadcn/ui original
-  if (variant !== 'warning') {
+  // Se não for warning ou info, usar o componente shadcn/ui original
+  if (variant !== 'warning' && variant !== 'info') {
     return (
       <ShadcnButton
         variant={variant as BaseVariant}

@@ -1,2 +1,4 @@
-export { Footer } from './Footer';
-export { Header, SimpleHeader } from './Header';
+export * from './BreadcrumbContext';
+export * from './Footer';
+export * from './Header';
+export * from './HeaderWithTitle';

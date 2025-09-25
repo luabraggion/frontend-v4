@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { memo, useMemo } from 'react';
 import { Avatar } from '../feedback';
 import { BreadcrumbNavigation } from '../navigation';
+import { useBreadcrumb } from './BreadcrumbContext';
 
 interface HeaderProps {
   /**
@@ -39,6 +40,11 @@ interface HeaderProps {
     href?: string;
     isCurrent?: boolean;
   }>;
+  /**
+   * Componente de breadcrumb customizado
+   * Se fornecido, sobrescreve a prop breadcrumbItems
+   */
+  breadcrumbComponent?: React.ReactNode;
   /**
    * Se true, esconde o breadcrumb
    * @default false
@@ -97,15 +103,22 @@ export const Header = memo<HeaderProps>(
     logoAlt,
     logoWidth = 30,
     logoHeight = 30,
-    breadcrumbItems = [
+    breadcrumbItems: propsBreadcrumbItems = [
       { label: 'Home', href: '/' },
       { label: 'Benefícios', isCurrent: true },
     ],
+    breadcrumbComponent,
     hideBreadcrumb = false,
     className,
     titleSize = '2xl',
     onLogoClick,
   }) => {
+    // Obtém os itens do breadcrumb do contexto
+    const { items: contextBreadcrumbItems } = useBreadcrumb();
+
+    // Usa os itens do contexto se disponíveis, senão usa os passados via props
+    const breadcrumbItems =
+      contextBreadcrumbItems.length > 0 ? contextBreadcrumbItems : propsBreadcrumbItems;
     // Memoiza as classes do header
     const headerClasses = useMemo(
       () => cn('flex items-center w-full border-b pb-6 justify-between', className),
@@ -150,9 +163,11 @@ export const Header = memo<HeaderProps>(
 
         {/* Lado direito - Breadcrumb */}
         <div className="flex items-center gap-4">
-          {!hideBreadcrumb && breadcrumbItems.length > 0 && (
+          {!hideBreadcrumb && (
             <>
-              <BreadcrumbNavigation items={breadcrumbItems} />
+              {breadcrumbComponent
+                ? breadcrumbComponent
+                : breadcrumbItems.length > 0 && <BreadcrumbNavigation items={breadcrumbItems} />}
               <div className="h-6 border-l border-border" />
               <Avatar size="sm" />
             </>

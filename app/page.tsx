@@ -1,20 +1,25 @@
 'use client';
 
 import { Button, ButtonIcon, ButtonWithIcon } from '@/components/buttons';
-import { TooltipWrapper } from '@/components/feedback';
-import AlertDialogWrapper from '@/components/feedback/AlertDialogWrapper';
-import { Combobox, DatePicker, Input, Label } from '@/components/forms';
-import { CustomDropdownMenu } from '@/components/forms/dropdown/DropdownMenu';
+import { Drawer } from '@/components/Drawer';
+import { AlertDialogWrapper, TooltipWrapper } from '@/components/feedback';
+import {
+  Combobox,
+  CustomDropdownMenu,
+  CustomSelect,
+  DatePicker,
+  Input,
+  Label,
+  MultSelect,
+} from '@/components/forms';
+import { Breadcrumb } from '@/components/layout';
 import { PaginationWrapper } from '@/components/navigation/Pagination';
 import { usePageTitle } from '@/components/PageTitleContext';
 import { cn } from '@/lib/ui';
 import { getCurrentYear } from '@/lib/ui/date-utils';
-import { Clock4, Ellipsis, Flower, Plus, Search, Trash } from 'lucide-react';
+import { CirclePause, Clock4, Ellipsis, Flower, Pencil, Plus, Search, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Drawer from '../components/drawers';
-import CustomSelect from '../components/forms/CustomSelect';
-import CustomMultiSelect from '../components/forms/MultSelect';
 import { MultiSelectItem } from '../components/ui/multi-select';
 
 // Definição de tipos
@@ -31,11 +36,11 @@ const comboboxOptions = [
 
 // Dados estáticos da página
 const statusOptions = [
-  { label: 'Ativos', value: '1' },
-  { label: 'Pausados', value: '2' },
-  { label: 'Concluídos', value: '3' },
-  { label: 'Agendados', value: '4' },
-  { label: 'Rascunho', value: '5' },
+  { label: 'Ativos', value: '1', icon: <Pencil /> },
+  { label: 'Pausados', value: '2', icon: <Pencil /> },
+  { label: 'Concluídos', value: '3', icon: <Pencil /> },
+  { label: 'Agendados', value: '4', icon: <Pencil /> },
+  { label: 'Rascunho', value: '5', icon: <Pencil /> },
 ];
 
 // useEffect moved inside Home component
@@ -174,9 +179,11 @@ export default function Home() {
   const { setTitle } = usePageTitle();
   const router = useRouter();
 
+  const pageTitle = 'Benefícios';
+
   useEffect(() => {
-    setTitle('Benefícios');
-  }, [setTitle]);
+    setTitle(pageTitle);
+  }, [setTitle, pageTitle]);
 
   // Estado para controle do AlertDialog de Excluir
   const [openDialog, setOpenDialog] = useState(false);
@@ -256,6 +263,14 @@ export default function Home() {
 
   return (
     <div>
+      {/* Define o breadcrumb para esta página */}
+      <Breadcrumb
+        items={[
+          { label: 'Início', href: '/' },
+          { label: pageTitle, href: '/', isCurrent: true },
+        ]}
+      />
+
       {/* Formulário de Filtro */}
       <div className="flex justify-center items-end-safe p-10 gap-4 mx-auto border-b bg-white rounded-2xl">
         {/* Seleção do tipo de campanha */}
@@ -304,7 +319,7 @@ export default function Home() {
           placeholder="Selecione o tipo de status..."
           className="bg-white hover:bg-white"
         /> */}
-        <CustomMultiSelect
+        <MultSelect
           options={statusOptions}
           selectedValues={selectedStatusValues}
           onChange={(values) => setSelectedStatusValues(values)}
@@ -368,7 +383,8 @@ export default function Home() {
           <ButtonWithIcon
             icon={<Plus />}
             variant="default"
-            className="bg-sky-100 text-sky-800 font-semibold hover:bg-sky-50"
+            className="bg-sky-100 text-sky-800 font-semibold hover:bg-sky-50 cursor-pointer"
+            onClick={() => router.push('/beneficio/create')}
           >
             Adicionar
           </ButtonWithIcon>
@@ -461,18 +477,24 @@ export default function Home() {
                     </TooltipWrapper>
                     <CustomDropdownMenu
                       items={[
-                        { label: 'Editar', onClick: () => router.push(`/campanha/edit/${row.id}`) },
+                        {
+                          label: 'Editar',
+                          onClick: () => router.push(`/beneficio/edit/${row.id}`),
+                          icon: <Pencil />,
+                        },
                         {
                           label: 'Pausar',
                           onClick: () => {
                             setPauseMode(true);
                             setOpenDialog(true);
                           },
+                          icon: <CirclePause />,
                           disabled: false,
                         },
                         {
                           label: 'Detalhes',
-                          onClick: () => router.push(`/campanha/detalhes/${row.id}`),
+                          onClick: () => router.push(`/beneficio/detalhes/${row.id}`),
+                          icon: <Search />,
                         },
                         {
                           label: 'Excluir',
@@ -480,6 +502,7 @@ export default function Home() {
                             setPauseMode(false);
                             setOpenDialog(true);
                           },
+                          icon: <Trash />,
                         },
                       ]}
                       icon={<Ellipsis size={18} />}

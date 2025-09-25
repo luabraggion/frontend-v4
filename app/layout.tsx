@@ -1,4 +1,4 @@
-import { Footer } from '@/components/layout';
+import { BreadcrumbProvider, Footer } from '@/components/layout';
 import HeaderWithTitle from '@/components/layout/HeaderWithTitle';
 import { PageTitleProvider } from '@/components/PageTitleContext';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -45,11 +45,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
           disableTransitionOnChange
         >
           <PageTitleProvider>
-            <div className="flex min-h-screen flex-col bg-gray-100 w-full px-10 pt-10 space-y-10">
-              <HeaderWithTitle />
-              <main className="flex-1">{children}</main>
-              <Footer companyName="Big2be." version="4.0.0" className="bg-transparent" />
-            </div>
+            <BreadcrumbProvider>
+              <div className="flex min-h-screen flex-col bg-gray-100 w-full px-10 pt-10 space-y-10">
+                <HeaderWithTitle />
+                <main className="flex-1">{children}</main>
+                <Footer companyName="Big2be." version="4.0.0" className="bg-transparent" />
+              </div>
+            </BreadcrumbProvider>
           </PageTitleProvider>
           <SpeedInsights />
         </ThemeProvider>

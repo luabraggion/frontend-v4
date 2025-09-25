@@ -33,6 +33,55 @@ import { BreadcrumbNavigation } from '@/components/navigation';
 />
 ```
 
+### ProgressBarCircle
+
+Componente de navegação em etapas (wizard) com círculos e linhas de progresso.
+
+```tsx
+import { ProgressBarCircle, type Step } from '@/components/navigation';
+
+// Uso com etapas definidas explicitamente
+const steps: Step[] = [
+  { name: 'Dados Básicos', id: 1, status: 'complete' },
+  { name: 'Público', id: 2, status: 'current' },
+  { name: 'Configurações', id: 3, status: 'upcoming' },
+];
+
+<ProgressBarCircle steps={steps} defaultLayout={true} />
+
+// Uso com currentStep (mais simples)
+<ProgressBarCircle currentStep={2} />
+
+// Uso personalizado
+<ProgressBarCircle
+  currentStep={2}
+  spacing="compact"
+  showLabels={true}
+  numbered={false} // Usa ícones de check em vez de números
+  className="my-custom-class"
+/>
+```
+
+#### Propriedades
+
+- `steps`: Lista de etapas a serem exibidas
+- `currentStep`: Número da etapa atual (alternativa a definir status manualmente)
+- `className`: Classes CSS adicionais
+- `spacing`: Espaçamento entre os elementos (`'default'`, `'compact'`, `'wide'`)
+- `showLabels`: Se deve mostrar os rótulos das etapas
+- `numbered`: Se deve mostrar números em vez de ícones de verificação
+- `defaultLayout`: Se deve aplicar o layout padrão com largura máxima e centralização
+
+#### Compatibilidade com código existente
+
+Para manter compatibilidade com código existente, você pode continuar usando o nome `StepProgressBar`, que agora é um alias para `ProgressBarCircle`:
+
+```tsx
+// Ainda funciona
+import { StepProgressBar } from '@/components/navigation';
+<StepProgressBar currentStep={2} />;
+```
+
 ## Funcionalidades
 
 ### Acessibilidade
