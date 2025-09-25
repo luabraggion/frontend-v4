@@ -31,7 +31,7 @@ storybook-static/
 !.yarn/versions
 .pnpm-lock.yaml
 package-lock.json
-yarn.lock
+# yarn.lock - Mantido no controle de versão quando usando Yarn
 
 # ===============================================
 # Arquivos de Build do Next.js
