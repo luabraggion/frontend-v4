@@ -202,3 +202,5 @@ optimize-*.js
 /docs/.docusaurus
 
 *storybook.log
+
+.vercel
