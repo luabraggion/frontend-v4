@@ -46,7 +46,7 @@
     }
   },
   // Arquivos incluídos na compilação
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "types/*.d.ts"],
   // Pastas/arquivos excluídos da compilação
   "exclude": ["node_modules"]
 }

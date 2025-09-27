@@ -7,7 +7,8 @@ import { usePageTitle } from '@/components/PageTitleContext';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/index';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import StepConfiguracoesPremiacoes from './components/StepConfiguracoesPremiacoes';
 import StepDadosBasicos from './components/StepDadosBasicos';
@@ -74,6 +75,22 @@ export default function Page() {
           {currentStep === 1 && <StepDadosBasicos />}
           {currentStep === 2 && <StepPublico />}
           {currentStep === 3 && <StepConfiguracoesPremiacoes />}
+          {currentStep === 4 && (
+            <section>
+              <CardHeader className="px-0">
+                <CardTitle>Prêmios</CardTitle>
+                <CardDescription>
+                  Prêmios são as recompensas que o cliente pode receber ao participar do benefício.
+                </CardDescription>
+              </CardHeader>
+              <div className="grid gap-4 border p-4 rounded-md">
+                <div className="flex justify-between items-center">
+                  <Label>Nome do Prêmio</Label>
+                  <Button>Adicionar Prêmio</Button>
+                </div>
+              </div>
+            </section>
+          )}
           <Separator className="my-8" />
           <div className="flex justify-end items-center">
             <div className="flex gap-2">

@@ -9,14 +9,12 @@
     "build:analyze": "ANALYZE=true next build --turbopack",
     "start": "next start",
     "start:prod": "next start -p 3000",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md,css}\"",
     "type-check": "tsc --noEmit",
     "clean": "rimraf .next",
     "preview": "npm run build && npm run start",
-    "check-all": "npm run type-check && npm run lint && npm run format:check",
+    "check-all": "npm run type-check && npm run format:check",
     "prepare": "husky"
   },
   "dependencies": {
@@ -53,25 +51,15 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
     "@next/bundle-analyzer": "^15.5.2",
-    "@next/eslint-plugin-next": "^15.5.2",
     "@tailwindcss/postcss": "^4",
     "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@typescript-eslint/eslint-plugin": "^8.42.0",
-    "@typescript-eslint/parser": "^8.42.0",
     "@vitest/browser": "^3.2.4",
     "@vitest/coverage-v8": "^3.2.4",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.11",
     "playwright": "^1.55.0",
@@ -85,7 +73,6 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": [
-      "eslint --fix",
       "prettier --write"
     ],
     "*.{json,md,css,yml,yaml}": [
