@@ -8,8 +8,9 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/index';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Premio, TablePremios } from '@/components/ui/table-premios';
+import { Plus } from 'lucide-react';
 import StepConfiguracoesPremiacoes from './components/StepConfiguracoesPremiacoes';
 import StepDadosBasicos from './components/StepDadosBasicos';
 import StepPublico from './components/StepPublico';
@@ -47,6 +48,42 @@ export default function Page() {
   // Estado para controle da etapa atual do wizard
   const [currentStep, setCurrentStep] = useState(1);
 
+  // Estado para os prêmios (dados de exemplo)
+  const [premios, setPremios] = useState<Premio[]>([
+    {
+      id: 1,
+      posicao: 1,
+      tipo: 'Não premiado',
+      nome: 'Não foi dessa vez',
+      estoque: 10,
+      ativo: true,
+    },
+    {
+      id: 2,
+      posicao: 2,
+      tipo: 'Produto',
+      nome: 'Coca-Cola 2L',
+      estoque: null, // Ilimitado
+      ativo: true,
+    },
+    {
+      id: 3,
+      posicao: 3,
+      tipo: 'Cupom',
+      nome: 'Cupom de 50% de desconto na próxima compra',
+      estoque: 0, // Esgotado
+      ativo: false,
+    },
+    {
+      id: 4,
+      posicao: 4,
+      tipo: 'Produto Externo',
+      nome: 'Copo Stanley',
+      estoque: 50,
+      ativo: true,
+    },
+  ]);
+
   // Funções para avançar e retroceder etapas
   const nextStep = () => {
     if (currentStep < 7) setCurrentStep(currentStep + 1);
@@ -55,6 +92,27 @@ export default function Page() {
   // Função para retroceder etapa
   const prevStep = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+
+  // Funções para manipular prêmios
+  const handleEditPremio = (premio: Premio) => {
+    console.log('Editando prêmio:', premio);
+    // Aqui você implementaria a lógica para editar o prêmio
+  };
+
+  const handleDeletePremio = (id: number) => {
+    console.log('Excluindo prêmio ID:', id);
+    setPremios((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const handleViewPremio = (premio: Premio) => {
+    console.log('Visualizando prêmio:', premio);
+    // Aqui você implementaria a lógica para visualizar detalhes do prêmio
+  };
+
+  const handleAddPremio = () => {
+    console.log('Adicionando novo prêmio');
+    // Aqui você implementaria a lógica para adicionar um novo prêmio
   };
 
   // Renderiza o componente
@@ -76,19 +134,25 @@ export default function Page() {
           {currentStep === 2 && <StepPublico />}
           {currentStep === 3 && <StepConfiguracoesPremiacoes />}
           {currentStep === 4 && (
-            <section>
-              <CardHeader className="px-0">
-                <CardTitle>Prêmios</CardTitle>
+            <section className="space-y-6">
+              <CardHeader className="px-0 gap-0">
+                <CardTitle className="flex justify-between items-center">
+                  <span className="text-lg font-semibold">Lista de Prêmios</span>
+                  <Button onClick={handleAddPremio} className="gap-2" size="sm">
+                    <Plus className="h-4 w-4" />
+                    <span>Adicionar</span>
+                  </Button>
+                </CardTitle>
                 <CardDescription>
                   Prêmios são as recompensas que o cliente pode receber ao participar do benefício.
                 </CardDescription>
               </CardHeader>
-              <div className="grid gap-4 border p-4 rounded-md">
-                <div className="flex justify-between items-center">
-                  <Label>Nome do Prêmio</Label>
-                  <Button>Adicionar Prêmio</Button>
-                </div>
-              </div>
+              <TablePremios
+                premios={premios}
+                onEdit={handleEditPremio}
+                onDelete={handleDeletePremio}
+                onView={handleViewPremio}
+              />
             </section>
           )}
           <Separator className="my-8" />
