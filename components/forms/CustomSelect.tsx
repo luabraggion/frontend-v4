@@ -12,7 +12,7 @@ import * as React from 'react';
 
 interface CustomSelectProps {
   options: { value: string; label: string }[];
-  value: string;
+  value: string | null;
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
@@ -61,7 +61,7 @@ const CustomSelect: React.FC<CustomSelectProps> = React.memo(
       <div className="relative group">
         <Select
           defaultValue=""
-          value={value}
+          value={value ?? undefined}
           onValueChange={onChange}
           open={isOpen}
           onOpenChange={setIsOpen}

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import * as React from 'react';
 
 import { Button, buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/ui';
+import { cn } from '@/lib/ui/index';
 
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
   return (
