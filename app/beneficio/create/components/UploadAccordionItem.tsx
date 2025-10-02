@@ -1,7 +1,8 @@
 import { FileUpload } from '@/components/forms';
 import { IPhoneMockup } from '@/components/index';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 
 /**
  * Interface para as propriedades do componente UploadAccordionItem
@@ -35,26 +36,47 @@ export const UploadAccordionItem: React.FC<UploadAccordionItemProps> = ({
 }) => {
   // Estado para armazenar a URL da imagem selecionada
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  // Estado para armazenar as dimensões da imagem
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
   // Função para lidar com a seleção de arquivo
   const handleFileSelect = (file: File) => {
-    // Criar URL para visualização da imagem
-    const imageUrl = URL.createObjectURL(file);
-    setPreviewImage(imageUrl);
+    if (!file || !file.type.startsWith('image/')) {
+      setPreviewImage(null);
+      onFileSelect(file);
+      return;
+    }
+
+    // Para compatibilidade com o Next.js, vamos usar uma abordagem otimizada
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result && typeof event.target.result === 'string') {
+        setPreviewImage(event.target.result);
+
+        // Determinar dimensões da imagem
+        const img = document.createElement('img');
+        img.onload = () => {
+          setImageDimensions({
+            width: img.width,
+            height: img.height,
+          });
+        };
+        img.src = event.target.result;
+      }
+    };
+    reader.readAsDataURL(file);
 
     // Chamar o callback original
     onFileSelect(file);
   };
 
-  // Limpar URLs de objeto ao desmontar o componente
+  // Efeito para limpeza quando o componente é desmontado
   useEffect(() => {
     return () => {
-      // Revogar a URL do objeto quando o componente for desmontado
-      if (previewImage) {
-        URL.revokeObjectURL(previewImage);
-      }
+      // Limpeza de recursos ao desmontar
+      setPreviewImage(null);
     };
-  }, [previewImage]);
+  }, []);
   return (
     <AccordionItem value={value} className="last:border border rounded-xl p-4">
       <AccordionTrigger className="group hover:no-underline">
@@ -78,11 +100,21 @@ export const UploadAccordionItem: React.FC<UploadAccordionItemProps> = ({
               <IPhoneMockup color="black" variant="with-buttons">
                 {previewImage && (
                   <div className="flex items-center justify-center h-full bg-white">
-                    <img
-                      src={previewImage}
-                      alt="Preview"
-                      className="max-h-full max-w-full object-contain"
-                    />
+                    <div className="relative w-full h-full flex items-center justify-center p-4">
+                      {imageDimensions.width > 0 ? (
+                        <Image
+                          src={previewImage}
+                          alt="Preview"
+                          width={imageDimensions.width}
+                          height={imageDimensions.height}
+                          className="max-h-full max-w-full object-contain"
+                          priority
+                          unoptimized // Necessário para usar com Data URLs
+                        />
+                      ) : (
+                        <div className="h-12 w-12 rounded-full border-4 border-t-transparent border-blue-500 animate-spin" />
+                      )}
+                    </div>
                   </div>
                 )}
               </IPhoneMockup>
