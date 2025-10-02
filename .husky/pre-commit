@@ -1,11 +1,10 @@
 #!/usr/bin/env sh
-
 # 🎯 Pre-commit hook: Executa lint-staged (fail-fast)
 # - Pula execução se não houver arquivos staged
 # - Usa binário local quando disponível, com fallback para npx
 # - Permite pular via SKIP_PRECOMMIT=1 ou SKIP_LINT_STAGED=1
 
-set -eu
+# Removi o set -eu que pode causar problemas no Windows
 
 echo "🔍 Executando verificações de qualidade (pre-commit)..."
 

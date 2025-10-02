@@ -2,6 +2,7 @@
   "name": "nextjs",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack -p 8000",
     "dev:prod": "next dev --turbopack -p 8000 --experimental-https",
@@ -15,7 +16,8 @@
     "clean": "rimraf .next",
     "preview": "npm run build && npm run start",
     "check-all": "npm run type-check && npm run format:check",
-    "prepare": "husky"
+    "prepare": "husky",
+    "lint-staged": "lint-staged"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",
