@@ -1,0 +1,74 @@
+/* Estilos para o controle deslizante de cores */
+.color-slider {
+  height: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  width: 100%;
+  background-image: linear-gradient(
+    to right,
+    #ff0000,
+    #ffff00,
+    #00ff00,
+    #00ffff,
+    #0000ff,
+    #ff00ff,
+    #ff0000
+  );
+}
+
+/* Estiliza o thumb (controle) do slider */
+.color-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #6e6e6e;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.color-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #6e6e6e;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.color-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.color-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
+
+/* Estiliza o track (trilha) do slider */
+.color-slider::-webkit-slider-runnable-track {
+  height: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+
+.color-slider::-moz-range-track {
+  height: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+
+.color-slider:focus {
+  outline: none;
+}
