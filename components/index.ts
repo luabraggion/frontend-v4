@@ -18,6 +18,9 @@ export * from './feedback';
 // Componentes de Layout (headers, footers, sidebars, etc.)
 export * from './layout';
 
+// Componentes de Mockup (mockups de dispositivos, interfaces, etc.)
+export * from './mockups';
+
 // Componentes Base (shadcn ui e outros componentes de baixo nível)
 // Obs: Idealmente, componentes da pasta ui devem ser importados diretamente usando @/components/ui
 // e não através deste arquivo barrel para evitar importações desnecessárias

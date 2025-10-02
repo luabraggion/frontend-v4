@@ -19,7 +19,9 @@ const extendedButtonVariants = cva(
           'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
         warning:
           'bg-warning text-white shadow-xs hover:bg-warning/90 focus-visible:ring-warning/20 dark:focus-visible:ring-warning/40',
-        info: 'bg-blue-100 text-blue-500 shadow-xs hover:bg-blue-100/75 focus-visible:ring-blue-200/20 dark:focus-visible:ring-blue-200/40',
+        success:
+          'bg-success text-success-foreground shadow-xs hover:bg-success/90 focus-visible:ring-success/20 dark:focus-visible:ring-success/40',
+        info: 'bg-info text-info-foreground shadow-xs hover:bg-info/90 focus-visible:ring-info/20 dark:focus-visible:ring-info/40',
         outline:
           'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
         secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
@@ -44,6 +46,7 @@ type ExtendedVariant =
   | 'default'
   | 'destructive'
   | 'warning'
+  | 'success'
   | 'info'
   | 'outline'
   | 'secondary'
@@ -59,7 +62,7 @@ interface ExtendedButtonProps extends Omit<React.ComponentProps<'button'>, 'vari
 }
 
 /**
- * Button component que estende o shadcn/ui Button com suporte às variantes warning e info
+ * Button component que estende o shadcn/ui Button com suporte às variantes warning, success e info
  *
  * @example
  * ```tsx
@@ -69,6 +72,7 @@ interface ExtendedButtonProps extends Omit<React.ComponentProps<'button'>, 'vari
  *
  * // Variantes customizadas
  * <Button variant="warning">Botão Warning</Button>
+ * <Button variant="success">Botão Sucesso</Button>
  * <Button variant="info">Botão Info</Button>
  * ```
  */
@@ -80,8 +84,8 @@ function Button({
   children,
   ...props
 }: ExtendedButtonProps) {
-  // Se não for warning ou info, usar o componente shadcn/ui original
-  if (variant !== 'warning' && variant !== 'info') {
+  // Se não for warning, success ou info, usar o componente shadcn/ui original
+  if (variant !== 'warning' && variant !== 'success' && variant !== 'info') {
     return (
       <ShadcnButton
         variant={variant as BaseVariant}
@@ -95,7 +99,7 @@ function Button({
     );
   }
 
-  // Para warning, usar nosso componente customizado
+  // Para warning, success ou info, usar nosso componente customizado
   const Comp = asChild ? Slot : 'button';
 
   return (

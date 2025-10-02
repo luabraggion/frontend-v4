@@ -38,7 +38,7 @@ const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
       secondaryText = 'ou arraste e solte',
       acceptText = 'PNG, JPG, GIF up max 10MB',
       className = '',
-      buttonClassName = 'relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-600 hover:text-indigo-500 dark:bg-transparent dark:text-indigo-400 dark:focus-within:outline-indigo-500 dark:hover:text-indigo-300',
+      buttonClassName = 'relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500 dark:bg-transparent dark:text-indigo-400 dark:focus-within:outline-indigo-500 dark:hover:text-indigo-300',
       icon = (
         <ImageUp className="mx-auto size-12 text-gray-300 dark:text-gray-500" aria-hidden="true" />
       ),

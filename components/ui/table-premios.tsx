@@ -114,7 +114,7 @@ export function TablePremios({
                     <CustomDropdownMenu
                       icon={<MoreHorizontal size={18} />}
                       showSeparator={true}
-                      label="Ações"
+                      label="Menu"
                       align="end"
                       className="p-0 text-gray-500 cursor-pointer size-5 hover:bg-transparent justify-center focus-visible:outline-none"
                       items={[

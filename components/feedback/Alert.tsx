@@ -75,9 +75,9 @@ const variantConfig = {
   },
   success: {
     container:
-      'bg-green-50 text-green-900 border-green-200 dark:bg-green-900/20 dark:text-green-100 dark:border-green-800',
+      'bg-success/10 text-success-foreground border-success/20 dark:bg-success/10 dark:text-success-foreground dark:border-success/20',
     icon: <CheckCircle className="h-4 w-4" />,
-    iconColor: 'text-green-500',
+    iconColor: 'text-success',
   },
   warning: {
     container:
@@ -93,9 +93,9 @@ const variantConfig = {
   },
   info: {
     container:
-      'bg-blue-50 text-blue-900 border-blue-200 dark:bg-blue-900/20 dark:text-blue-100 dark:border-blue-800',
+      'bg-info/10 text-info-foreground border-info/20 dark:bg-info/10 dark:text-info-foreground dark:border-info/20',
     icon: <AlertCircle className="h-4 w-4" />,
-    iconColor: 'text-blue-500',
+    iconColor: 'text-info',
   },
 } as const;
 

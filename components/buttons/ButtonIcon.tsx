@@ -10,7 +10,16 @@ interface ButtonIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * Variante do botão
    */
-  variant?: 'default' | 'destructive' | 'warning' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'warning'
+    | 'success'
+    | 'info'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   /**
    * Tamanho do botão
    */
@@ -53,6 +62,13 @@ interface ButtonIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  *   variant="ghost"
  *   size="sm"
  *   ariaLabel="Editar"
+ * />
+ *
+ * // Botão de sucesso
+ * <ButtonIcon
+ *   icon={<CheckIcon />}
+ *   variant="success"
+ *   ariaLabel="Confirmar"
  * />
  * ```
  */

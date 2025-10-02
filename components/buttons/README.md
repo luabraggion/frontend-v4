@@ -15,7 +15,10 @@ Button estendido que adiciona suporte à variante `warning` (amarela) mantendo c
 **Características:**
 
 - ✅ Todas as variantes do shadcn/ui: `default`, `destructive`, `outline`, `secondary`, `ghost`, `link`
-- ✅ **Nova variante:** `warning` (amarela)
+- ✅ **Novas variantes:**
+  - `warning` (amarela)
+  - `success` (verde)
+  - `info` (azul)
 - ✅ Compatibilidade total com shadcn/ui
 - ✅ Safe para updates do shadcn
 
@@ -26,8 +29,10 @@ import { Button } from '@/components/buttons';
 <Button variant="default">Botão Padrão</Button>
 <Button variant="destructive">Botão Destrutivo</Button>
 
-// Nova variante warning
+// Novas variantes customizadas
 <Button variant="warning">Atenção!</Button>
+<Button variant="success">Sucesso</Button>
+<Button variant="info">Informação</Button>
 ```
 
 ### ButtonWithIcon
@@ -167,6 +172,11 @@ Componente para botões apenas com ícone, ideal para barras de ferramentas e a�
 // Adicionar/Criar
 <ButtonWithIcon icon={<PlusIcon />} variant="default">
   Criar novo
+</ButtonWithIcon>
+
+// Sucesso
+<ButtonWithIcon icon={<CheckIcon />} variant="success">
+  Operação concluída
 </ButtonWithIcon>
 ```
 

@@ -25,6 +25,10 @@ export interface WheelProps {
   showSpinButton?: boolean;
   /** permite passar função para girar a roleta externamente */
   externalSpinRef?: React.Ref<(opts?: { forceIndex?: number }) => void>;
+  /** cor de fundo do botão de girar */
+  spinButtonColor?: string;
+  /** cor do texto do botão de girar */
+  spinButtonTextColor?: string;
 }
 
 const defaultColors = [
@@ -47,7 +51,7 @@ function easeInOut(t: number) {
 const Wheel: React.FC<WheelProps> = ({
   options,
   size = 340,
-  className = '',
+  className = 'flex flex-col gap-4 items-center w-max',
   durationMs = 7000,
   spins = 5,
   textOrientation = 'vertical',
@@ -56,6 +60,8 @@ const Wheel: React.FC<WheelProps> = ({
   spinButtonSpinningLabel = 'Girando…',
   showSpinButton = true,
   externalSpinRef,
+  spinButtonColor,
+  spinButtonTextColor,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const offscreenRef = useRef<HTMLCanvasElement | null>(null);
@@ -271,17 +277,20 @@ const Wheel: React.FC<WheelProps> = ({
     <div className={className} style={{ width: size }}>
       <canvas ref={canvasRef} style={{ display: 'block', borderRadius: '50%' }} />
       {showSpinButton && (
-        <div style={{ display: 'flex', gap: 10, marginTop: 5 }}>
-          <button
-            onClick={() => startSpin()}
-            disabled={isSpinning}
-            style={{ flex: 1, padding: '10px 6px', cursor: isSpinning ? 'not-allowed' : 'pointer' }}
-            aria-pressed={isSpinning}
-            className="text-gray-800 font-semibold"
-          >
-            {isSpinning ? spinButtonSpinningLabel : spinButtonLabel}
-          </button>
-        </div>
+        <button
+          onClick={() => startSpin()}
+          disabled={isSpinning}
+          style={{
+            cursor: isSpinning ? 'not-allowed' : 'pointer',
+            backgroundColor: spinButtonColor || undefined,
+            color: spinButtonTextColor || undefined,
+            borderColor: spinButtonColor || undefined,
+          }}
+          aria-pressed={isSpinning}
+          className="px-8 py-2 hover:opacity-90 transition-opacity hover:cursor-pointer rounded-lg"
+        >
+          {isSpinning ? spinButtonSpinningLabel : spinButtonLabel}
+        </button>
       )}
     </div>
   );
