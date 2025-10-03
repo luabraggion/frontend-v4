@@ -85,7 +85,7 @@ export function TablePremios({
         <TableHeader>
           <TableRow>
             {onToggleSelectAll && (
-              <TableHead className="w-[50px]">
+              <TableHead className="w-[15px]">
                 <Checkbox
                   checked={premios.length > 0 && selectedIds.length === premios.length}
                   onCheckedChange={onToggleSelectAll}

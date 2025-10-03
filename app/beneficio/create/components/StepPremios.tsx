@@ -8,7 +8,27 @@ import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Premio, TablePremios } from '@/components/ui/table-premios';
 import { Clock4, Plus, Trash } from 'lucide-react';
 import { useState } from 'react';
+import { z } from 'zod';
 import { useCreateWizard } from './CreateWizardContext';
+
+// Schema de validação Zod para o formulário de prêmio
+const premioSchema = z.object({
+  nome: z
+    .string()
+    .min(3, 'O nome deve ter no mínimo 3 caracteres')
+    .max(100, 'O nome deve ter no máximo 100 caracteres')
+    .trim(),
+  tipo: z.enum(['Produto', 'Não premiado', 'Cupom', 'Produto Externo'], {
+    errorMap: () => ({ message: 'Selecione um tipo válido' }),
+  }),
+  estoque: z
+    .number()
+    .int('O estoque deve ser um número inteiro')
+    .min(0, 'O estoque não pode ser negativo')
+    .nullable(),
+});
+
+type PremioFormData = z.infer<typeof premioSchema>;
 
 export interface StepPremiosProps {
   // Se necessário, adicionar props específicas que podem ser passadas pelo componente pai
@@ -38,8 +58,14 @@ export default function StepPremios() {
   // Estado para seleção múltipla
   const [premiosSelecionados, setPremiosSelecionados] = useState<number[]>([]);
 
+  // Estado para erros de validação
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   // Função unificada para abrir o drawer (adição ou edição)
   const abrirDrawerPremio = (premio?: Premio) => {
+    // Limpa erros ao abrir o drawer
+    setErrors({});
+
     // Se não receber um prêmio, cria um novo
     if (!premio) {
       // Cria um prêmio vazio para adicionar novo
@@ -65,6 +91,76 @@ export default function StepPremios() {
     }
 
     setIsDrawerOpen(true);
+  };
+
+  // Função para validar o formulário
+  const validarFormulario = (): boolean => {
+    if (!premioParaEditar) return false;
+
+    try {
+      // Valida os dados do prêmio
+      premioSchema.parse({
+        nome: premioParaEditar.nome,
+        tipo: selectValueTipo,
+        estoque: premioParaEditar.estoque,
+      });
+
+      // Limpa erros se validação passar
+      setErrors({});
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        // Mapeia os erros do Zod para um objeto de erros
+        const formattedErrors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            formattedErrors[err.path[0].toString()] = err.message;
+          }
+        });
+        setErrors(formattedErrors);
+      }
+      return false;
+    }
+  };
+
+  // Função para salvar o prêmio (adicionar ou editar)
+  const salvarPremio = () => {
+    // Valida antes de salvar
+    if (!validarFormulario()) {
+      console.log('Validação falhou:', errors);
+      return;
+    }
+
+    if (premioParaEditar) {
+      console.log(
+        isNovoPremioPendente ? 'Adicionando novo prêmio:' : 'Salvando alterações no prêmio:',
+        premioParaEditar,
+      );
+
+      if (isNovoPremioPendente) {
+        // Adicionar novo prêmio à lista
+        setPremios((prev) => {
+          const novaLista = [...prev, { ...premioParaEditar, tipo: selectValueTipo as any }];
+          console.log('Nova lista de premios:', novaLista);
+          return novaLista;
+        });
+      } else {
+        // Atualizar prêmio existente
+        setPremios((prev) =>
+          prev.map((p) =>
+            p.id === premioParaEditar.id
+              ? { ...premioParaEditar, tipo: selectValueTipo as any }
+              : p,
+          ),
+        );
+      }
+
+      // Fecha o drawer e limpa estados
+      setIsDrawerOpen(false);
+      setPremioParaEditar(null);
+      setIsNovoPremioPendente(false);
+      setErrors({});
+    }
   };
 
   // Função para preparar exclusão (abre modal)
@@ -245,6 +341,7 @@ export default function StepPremios() {
                 setIsDrawerOpen(false);
                 setPremioParaEditar(null);
                 setIsNovoPremioPendente(false);
+                setErrors({});
               }}
             >
               Cancelar
@@ -254,45 +351,7 @@ export default function StepPremios() {
               variant="default"
               size="lg"
               className="flex-1 bg-sky-100 text-sky-800 font-semibold hover:border-sky-200 hover:bg-sky-100"
-              onClick={() => {
-                // Verifica se é uma edição ou adição de prêmio
-                if (premioParaEditar) {
-                  console.log(
-                    isNovoPremioPendente
-                      ? 'Adicionando novo prêmio:'
-                      : 'Salvando alterações no prêmio:',
-                    premioParaEditar,
-                  );
-
-                  if (isNovoPremioPendente) {
-                    // Adicionar novo prêmio à lista
-                    console.log('Adicionando à lista de premios:', {
-                      ...premioParaEditar,
-                      tipo: selectValueTipo,
-                    });
-                    setPremios((prev) => {
-                      const novaLista = [
-                        ...prev,
-                        { ...premioParaEditar, tipo: selectValueTipo as any },
-                      ];
-                      console.log('Nova lista de premios:', novaLista);
-                      return novaLista;
-                    });
-                  } else {
-                    // Atualizar prêmio existente
-                    setPremios((prev) =>
-                      prev.map((p) =>
-                        p.id === premioParaEditar.id
-                          ? { ...premioParaEditar, tipo: selectValueTipo as any }
-                          : p,
-                      ),
-                    );
-                  }
-                }
-                setIsDrawerOpen(false);
-                setPremioParaEditar(null);
-                setIsNovoPremioPendente(false);
-              }}
+              onClick={salvarPremio}
             >
               {isNovoPremioPendente ? 'Adicionar' : 'Salvar'}
             </Button>
@@ -314,10 +373,19 @@ export default function StepPremios() {
               onChange={(e) => {
                 if (premioParaEditar) {
                   setPremioParaEditar({ ...premioParaEditar, nome: e.target.value });
+                  // Limpa erro do campo ao digitar
+                  if (errors.nome) {
+                    setErrors((prev) => ({ ...prev, nome: '' }));
+                  }
                 }
               }}
-              className="focus-visible:outline-none focus-visible:ring-0 focus-visible:border-sky-200"
+              className={`focus-visible:outline-none focus-visible:ring-0 ${
+                errors.nome
+                  ? 'border-red-500 focus-visible:border-red-500'
+                  : 'focus-visible:border-sky-200'
+              }`}
             />
+            {errors.nome && <p className="text-sm text-red-500 mt-1">{errors.nome}</p>}
           </div>
           <div className="grid gap-3">
             <Label htmlFor="premio-tipo">Tipo de Prêmio</Label>
@@ -329,10 +397,21 @@ export default function StepPremios() {
                 { label: 'Produto Externo', value: 'Produto Externo' },
               ]}
               value={selectValueTipo}
-              onChange={(value) => setSelectedValueTipo(value)}
-              className="bg-white focus-visible:outline-none focus-visible:border focus-visible:border-gray-200 focus-visible:ring-0"
+              onChange={(value) => {
+                setSelectedValueTipo(value);
+                // Limpa erro do campo ao selecionar
+                if (errors.tipo) {
+                  setErrors((prev) => ({ ...prev, tipo: '' }));
+                }
+              }}
+              className={`bg-white focus-visible:outline-none focus-visible:border focus-visible:ring-0 ${
+                errors.tipo
+                  ? 'border-red-500 focus-visible:border-red-500'
+                  : 'focus-visible:border-gray-200'
+              }`}
               placeholder="Selecione o tipo..."
             />
+            {errors.tipo && <p className="text-sm text-red-500 mt-1">{errors.tipo}</p>}
           </div>
           <div className="grid gap-3">
             <Input
@@ -346,11 +425,20 @@ export default function StepPremios() {
                 if (premioParaEditar) {
                   const valor = e.target.value === '' ? null : parseInt(e.target.value, 10);
                   setPremioParaEditar({ ...premioParaEditar, estoque: valor });
+                  // Limpa erro do campo ao digitar
+                  if (errors.estoque) {
+                    setErrors((prev) => ({ ...prev, estoque: '' }));
+                  }
                 }
               }}
-              className="focus-visible:outline-none focus-visible:ring-0 focus-visible:border-sky-200"
+              className={`focus-visible:outline-none focus-visible:ring-0 ${
+                errors.estoque
+                  ? 'border-red-500 focus-visible:border-red-500'
+                  : 'focus-visible:border-sky-200'
+              }`}
               placeholder="Deixe em branco para ilimitado"
             />
+            {errors.estoque && <p className="text-sm text-red-500 mt-1">{errors.estoque}</p>}
           </div>
         </div>
       </Drawer>
