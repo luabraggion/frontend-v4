@@ -81,7 +81,7 @@ const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
         >
           {label}
         </Label>
-        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 dark:border-white/25 bg-white">
+        <div className="flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 dark:border-white/25 bg-white">
           <div className="text-center">
             {icon}
             <div className="mt-4 flex text-sm/6 text-gray-600 dark:text-gray-400">

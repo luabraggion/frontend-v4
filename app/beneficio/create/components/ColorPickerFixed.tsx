@@ -1,3 +1,4 @@
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import '@/styles/ColorPicker.css';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -178,18 +179,26 @@ export const ColorPickerFixed: React.FC<ColorPickerFixedProps> = ({
         <p className="text-xs text-muted-foreground">{colors.length} cores (fixo)</p>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {colors.map((color, index) => (
-          <div key={index} className="relative">
-            <div
-              style={{ backgroundColor: color }}
-              className="w-10 h-10 rounded-full cursor-pointer border shadow-sm hover:scale-110 transition-transform"
-              onClick={() => startEditing(index)}
-              title={`Editar cor ${index + 1}`}
-            />
-          </div>
-        ))}
-      </div>
+      <TooltipProvider>
+        <div className="flex flex-wrap gap-2">
+          {colors.map((color, index) => (
+            <Tooltip key={index}>
+              <TooltipTrigger asChild>
+                <div className="relative">
+                  <div
+                    style={{ backgroundColor: color }}
+                    className="w-10 h-10 rounded-full cursor-pointer border shadow-sm hover:scale-110 transition-transform"
+                    onClick={() => startEditing(index)}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Editar cor {index + 1}</p>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </div>
+      </TooltipProvider>
 
       <div
         className={`bg-white p-4 rounded-lg shadow-md border ${

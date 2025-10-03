@@ -10,6 +10,7 @@ import { Button } from '@/components/index';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
+import { CreateWizardProvider } from './components/CreateWizardContext';
 import StepConfiguracoesPremiacoes from './components/StepConfiguracoesPremiacoes';
 import StepDadosBasicos from './components/StepDadosBasicos';
 import StepPersonalizacao from './components/StepPersonalizacao';
@@ -73,26 +74,28 @@ export default function Page() {
       <CardContent className="px-0">
         <ProgressBarCircle steps={wizardSteps} currentStep={currentStep} />
 
-        <div className="bg-white rounded-xl p-8 mt-20">
-          {currentStep === 1 && <StepDadosBasicos />}
-          {currentStep === 2 && <StepPublico />}
-          {currentStep === 3 && <StepConfiguracoesPremiacoes />}
-          {currentStep === 4 && <StepPremios />}
-          {currentStep === 5 && <StepPersonalizacao />}
-          <Separator className="my-8" />
-          <div className="flex justify-end items-center">
-            <div className="flex gap-2">
-              {currentStep > 1 && (
-                <Button variant="outline" onClick={prevStep}>
-                  Voltar
+        <CreateWizardProvider>
+          <div className="bg-white rounded-xl p-8 mt-20">
+            {currentStep === 1 && <StepDadosBasicos />}
+            {currentStep === 2 && <StepPublico />}
+            {currentStep === 3 && <StepConfiguracoesPremiacoes />}
+            {currentStep === 4 && <StepPremios />}
+            {currentStep === 5 && <StepPersonalizacao />}
+            <Separator className="my-8" />
+            <div className="flex justify-end items-center">
+              <div className="flex gap-2">
+                {currentStep > 1 && (
+                  <Button variant="outline" onClick={prevStep}>
+                    Voltar
+                  </Button>
+                )}
+                <Button variant="info" onClick={nextStep}>
+                  {currentStep < 6 ? 'Próximo' : 'Salvar'}
                 </Button>
-              )}
-              <Button variant="info" onClick={nextStep}>
-                {currentStep < 6 ? 'Próximo' : 'Salvar'}
-              </Button>
+              </div>
             </div>
           </div>
-        </div>
+        </CreateWizardProvider>
       </CardContent>
     </Card>
   );

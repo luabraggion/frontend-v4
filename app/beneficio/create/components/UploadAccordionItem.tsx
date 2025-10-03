@@ -98,11 +98,13 @@ export const UploadAccordionItem: React.FC<UploadAccordionItemProps> = ({
                 acceptText={acceptText}
               />
               <div className="flex flex-col items-center">
-                <h3 className="text-lg font-semibold mb-2 text-center">Prévia da Roleta</h3>
-                <IPhoneMockup color="black" variant="with-buttons">
+                <IPhoneMockup color="black" variant="with-buttons" className="flex flex-col">
+                  <div className="p-3 text-center">
+                    <h4 className="font-medium text-base">Prévia da Roleta</h4>
+                  </div>
                   {previewImage ? (
                     <div className="flex items-center justify-center h-full bg-white">
-                      <div className="relative w-full h-full flex items-center justify-center p-4">
+                      <div className="relative w-full h-full flex items-center justify-center p-4 -mt-14">
                         {imageDimensions.width > 0 ? (
                           <Image
                             src={previewImage}
@@ -119,7 +121,7 @@ export const UploadAccordionItem: React.FC<UploadAccordionItemProps> = ({
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center h-full bg-white text-center p-4">
+                    <div className="flex flex-col items-center justify-center bg-white text-center p-4 h-full -mt-14">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="64"

@@ -8,47 +8,15 @@ import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Premio, TablePremios } from '@/components/ui/table-premios';
 import { Clock4, Plus, Trash } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useCreateWizard } from './CreateWizardContext';
 
 export interface StepPremiosProps {
   // Se necessário, adicionar props específicas que podem ser passadas pelo componente pai
 }
 
 export default function StepPremios() {
-  // Estado para os prêmios (dados de exemplo)
-  const [premios, setPremios] = useState<Premio[]>([
-    {
-      id: 1,
-      posicao: 1,
-      tipo: 'Não premiado',
-      nome: 'Não foi dessa vez',
-      estoque: 10,
-      ativo: true,
-    },
-    {
-      id: 2,
-      posicao: 2,
-      tipo: 'Produto',
-      nome: 'Coca-Cola 2L',
-      estoque: null, // Ilimitado
-      ativo: true,
-    },
-    {
-      id: 3,
-      posicao: 3,
-      tipo: 'Cupom',
-      nome: 'Cupom de 50% de desconto na próxima compra',
-      estoque: 0, // Esgotado
-      ativo: false,
-    },
-    {
-      id: 4,
-      posicao: 4,
-      tipo: 'Produto Externo',
-      nome: 'Copo Stanley',
-      estoque: 50,
-      ativo: true,
-    },
-  ]);
+  // Usa o contexto compartilhado para ler/editar os prêmios
+  const { premios, setPremios } = useCreateWizard();
 
   // Estado para armazenar o prêmio que será editado ou adicionado
   const [premioParaEditar, setPremioParaEditar] = useState<Premio | null>(null);

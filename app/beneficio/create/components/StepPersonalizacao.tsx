@@ -7,9 +7,9 @@ import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { DownloadIcon, MinusIcon, PlusIcon } from 'lucide-react';
 import Image from 'next/image';
-import React, { useRef, useState } from 'react';
-import { ColorPicker } from './ColorPicker';
+import React, { useMemo, useRef, useState } from 'react';
 import ColorPickerFixed from './ColorPickerFixed';
+import { useCreateWizard } from './CreateWizardContext';
 import { SingleColorPicker } from './SingleColorPicker';
 import { UploadAccordionItem } from './UploadAccordionItem';
 import { useFileUploads, useItensPersonalizacao, useItensUpload } from './useFileUploads';
@@ -62,9 +62,10 @@ const StepPersonalizacao: React.FC = () => {
   // Estado para armazenar a cor do texto do botão girar
   const [corTextoBotao, setCorTextoBotao] = useState<string>('#000000');
 
-  // Estado para controlar o número de divisões da roleta
-  const [numeroDivisoes, setNumeroDivisoes] = useState<number>(4);
-  const maxDivisoes = 12; // Número máximo de divisões permitido
+  // Número de divisões agora reflete a quantidade de prêmios do passo 4
+  const { premios } = useCreateWizard();
+  const numeroDivisoes = useMemo(() => premios.length || 12, [premios.length]);
+  const maxDivisoes = 12; // mantém para validações e textos
 
   // Referência para controlar o giro da roleta externamente
   const wheelSpinRef = useRef<(opts?: { forceIndex?: number }) => void>(null);
@@ -98,32 +99,10 @@ const StepPersonalizacao: React.FC = () => {
   };
 
   // Funções para ajustar o número de divisões da roleta
-  const aumentarDivisoes = () => {
-    if (numeroDivisoes < maxDivisoes) {
-      const novoNumero = numeroDivisoes + 1;
-      setNumeroDivisoes(novoNumero);
-      ajustarCoresPorDivisoes(novoNumero);
-    }
-  };
-
-  const diminuirDivisoes = () => {
-    if (numeroDivisoes > 2) {
-      const novoNumero = numeroDivisoes - 1;
-      setNumeroDivisoes(novoNumero);
-      ajustarCoresPorDivisoes(novoNumero);
-    }
-  };
-
-  const handleChangeDivisoes = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valor = parseInt(e.target.value, 10);
-
-    if (!isNaN(valor)) {
-      // Garantir que o valor esteja entre 2 e maxDivisoes
-      const novoValor = Math.max(2, Math.min(valor, maxDivisoes));
-      setNumeroDivisoes(novoValor);
-      ajustarCoresPorDivisoes(novoValor);
-    }
-  };
+  // Controles de divisão ficam desabilitados, pois é derivado de prêmios
+  const aumentarDivisoes = () => {};
+  const diminuirDivisoes = () => {};
+  const handleChangeDivisoes = (_e: React.ChangeEvent<HTMLInputElement>) => {};
 
   // Função para ajustar o array de cores quando o número de divisões muda
   const ajustarCoresPorDivisoes = (novasDivisoes: number) => {
@@ -153,6 +132,13 @@ const StepPersonalizacao: React.FC = () => {
     }
   };
 
+  // Reage às mudanças de quantidade de prêmios (numeroDivisoes) para ajustar as cores
+  // evitando descompasso entre slots e array de cores
+  React.useEffect(() => {
+    ajustarCoresPorDivisoes(numeroDivisoes);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numeroDivisoes]);
+
   // Função para salvar os dados de personalização
   const salvarPersonalizacao = (itemId?: string) => {
     // Atualiza o estado com os dados atuais
@@ -167,7 +153,7 @@ const StepPersonalizacao: React.FC = () => {
 
       // Sincroniza os estados individuais com os dados salvos
       setCoresRoleta(novosDados.cores);
-      setNumeroDivisoes(novosDados.divisoes);
+      // numeroDivisoes é derivado e não deve ser setado diretamente aqui
       setCorBotaoGirar(novosDados.corBotao);
       setCorTextoBotao(novosDados.corTextoBotao);
 
@@ -325,7 +311,7 @@ const StepPersonalizacao: React.FC = () => {
                                   size="icon"
                                   type="button"
                                   onClick={diminuirDivisoes}
-                                  disabled={numeroDivisoes <= 2}
+                                  disabled
                                   className="h-9 w-9 flex items-center justify-center"
                                 >
                                   <MinusIcon className="h-4 w-4" />
@@ -339,6 +325,7 @@ const StepPersonalizacao: React.FC = () => {
                                     value={numeroDivisoes}
                                     onChange={handleChangeDivisoes}
                                     className="text-center"
+                                    disabled
                                   />
                                 </div>
                                 <Button
@@ -346,14 +333,15 @@ const StepPersonalizacao: React.FC = () => {
                                   size="icon"
                                   type="button"
                                   onClick={aumentarDivisoes}
-                                  disabled={numeroDivisoes >= maxDivisoes}
+                                  disabled
                                   className="h-9 w-9 flex items-center justify-center"
                                 >
                                   <PlusIcon className="h-4 w-4" />
                                 </Button>
                               </div>
                               <p className="text-sm text-muted-foreground mt-2">
-                                Defina o número de divisões da roleta (entre 2 e {maxDivisoes}).
+                                A quantidade de divisões é definida automaticamente pela quantidade
+                                de prêmios no passo 4.
                               </p>
                             </div>
                           </div>

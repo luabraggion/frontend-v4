@@ -153,13 +153,6 @@ export const useItensPersonalizacao: UploadItemConfig[] = [
     acceptText: 'PDF, PNG, JPG até 10MB',
   },
   {
-    id: 'divisao-roleta',
-    title: 'Número de divisões da Roleta',
-    description:
-      'Configuração do número de divisões da roleta, define quantos prêmios diferentes a roleta terá.',
-    uploadLabel: 'Enviar imagem da roleta',
-  },
-  {
     id: 'cores-roleta',
     title: 'Cores da Roleta',
     description: 'Definição das cores da roleta, é exibida atrás da roleta e dos botões.',
