@@ -9,13 +9,17 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/index';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Loader2 } from 'lucide-react';
 
 import { CreateWizardProvider } from './components/CreateWizardContext';
-import StepConfiguracoesPremiacoes from './components/StepConfiguracoesPremiacoes';
-import StepDadosBasicos from './components/StepDadosBasicos';
+import StepConfiguracoesPremiacoes, {
+  StepConfiguracoesPremiacoesRef,
+} from './components/StepConfiguracoesPremiacoes';
+import StepDadosBasicos, { StepDadosBasicosRef } from './components/StepDadosBasicos';
 import StepPersonalizacao from './components/StepPersonalizacao';
 import StepPremios from './components/StepPremios';
 import StepPublico, { StepPublicoRef } from './components/StepPublico';
+import StepResumo, { StepResumoRef } from './components/StepResumo';
 
 /**
  * Interface para as etapas do wizard de criação de benefícios
@@ -49,20 +53,52 @@ export default function Page() {
 
   // Estado para controle da etapa atual do wizard
   const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Refs para acessar métodos de validação dos steps
+  const stepDadosBasicosRef = useRef<StepDadosBasicosRef>(null);
   const stepPublicoRef = useRef<StepPublicoRef>(null);
+  const stepConfiguracoesPremiacoesRef = useRef<StepConfiguracoesPremiacoesRef>(null);
+  const stepResumoRef = useRef<StepResumoRef>(null);
 
   // Funções para avançar e retroceder etapas
-  const nextStep = () => {
-    // Valida o step atual antes de avançar
+  const nextStep = async () => {
+    // Valida Step 1 (Dados Básicos)
+    if (currentStep === 1) {
+      const isValid = stepDadosBasicosRef.current?.validar();
+      if (!isValid) {
+        console.log('Validação do Step Dados Básicos falhou');
+        return; // Impede avançar se houver erros
+      }
+    }
+
+    // Valida Step 2 (Público)
     if (currentStep === 2) {
-      // Valida Step de Público
       const isValid = stepPublicoRef.current?.validar();
       if (!isValid) {
         console.log('Validação do Step Público falhou');
         return; // Impede avançar se houver erros
       }
+    }
+
+    // Valida Step 3 (Configurações de Premiações)
+    if (currentStep === 3) {
+      const isValid = stepConfiguracoesPremiacoesRef.current?.validar();
+      if (!isValid) {
+        console.log('Validação do Step Configurações de Premiações falhou');
+        return; // Impede avançar se houver erros
+      }
+    }
+
+    // Step 6: Envia dados para API
+    if (currentStep === 6) {
+      setIsSubmitting(true);
+      try {
+        await stepResumoRef.current?.handleSubmit();
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
     }
 
     if (currentStep < 7) setCurrentStep(currentStep + 1);
@@ -89,22 +125,50 @@ export default function Page() {
 
         <CreateWizardProvider>
           <div className="bg-white rounded-xl p-8 mt-20">
-            {currentStep === 1 && <StepDadosBasicos />}
+            {currentStep === 1 && <StepDadosBasicos ref={stepDadosBasicosRef} />}
             {currentStep === 2 && <StepPublico ref={stepPublicoRef} />}
-            {currentStep === 3 && <StepConfiguracoesPremiacoes />}
+            {currentStep === 3 && (
+              <StepConfiguracoesPremiacoes ref={stepConfiguracoesPremiacoesRef} />
+            )}
             {currentStep === 4 && <StepPremios />}
             {currentStep === 5 && <StepPersonalizacao />}
+            {currentStep === 6 && <StepResumo ref={stepResumoRef} />}
             <Separator className="my-8" />
-            <div className="flex justify-end items-center">
+            <div className="flex justify-between items-center">
               <div className="flex gap-2">
-                {currentStep > 1 && (
+                {currentStep > 1 && currentStep < 6 && (
                   <Button variant="outline" onClick={prevStep}>
                     Voltar
                   </Button>
                 )}
-                <Button variant="info" onClick={nextStep}>
-                  {currentStep < 6 ? 'Próximo' : 'Salvar'}
-                </Button>
+              </div>
+              <div className="flex gap-2">
+                {currentStep === 6 ? (
+                  <>
+                    <Button variant="outline" onClick={prevStep} disabled={isSubmitting}>
+                      Voltar
+                    </Button>
+                    <Button
+                      variant="success"
+                      onClick={nextStep}
+                      disabled={isSubmitting}
+                      className="min-w-32"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Enviando...
+                        </>
+                      ) : (
+                        'Criar Benefício'
+                      )}
+                    </Button>
+                  </>
+                ) : (
+                  <Button variant="info" onClick={nextStep}>
+                    Próximo
+                  </Button>
+                )}
               </div>
             </div>
           </div>

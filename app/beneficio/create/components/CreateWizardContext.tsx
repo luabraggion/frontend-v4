@@ -9,11 +9,18 @@ import React, { createContext, useContext, useMemo, useState } from 'react';
 
 // Etapa 1: Dados Básicos
 export type DadosBasicos = {
+  tipoCampanha?: string;
+  titulo?: string;
+  dataInicioCampanha?: string | Date;
+  dataFimCampanha?: string | Date;
+  dataInicioVisualizacao?: string | Date;
+  dataFimVisualizacao?: string | Date;
+  habilitarVisualizacaoSemCadastro?: boolean;
+  // Campos antigos mantidos para compatibilidade
   nome?: string;
   descricao?: string;
   dataInicio?: string;
   dataFim?: string;
-  // Adicione outros campos conforme necessário
 };
 
 // Etapa 2: Público
@@ -25,9 +32,16 @@ export type DadosPublico = {
 
 // Etapa 3: Configurações de Premiação
 export type ConfiguracoesPremiacoes = {
+  filtrarPorValorGasto?: boolean;
+  filtrarPorProduto?: boolean;
+  valorMinimoGasto?: string;
+  tipoResgate?: string;
+  tipoAcumulacao?: string;
+  tipoSorteio?: string;
+  arquivoRegulamento?: File | null;
+  // Campos antigos mantidos para compatibilidade
   tipoPremiacoes?: string;
   probabilidades?: Record<number, number>;
-  // Adicione outros campos conforme necessário
 };
 
 // Etapa 5: Personalização

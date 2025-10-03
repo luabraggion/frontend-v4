@@ -148,7 +148,13 @@ export const Input = memo<InputProps>(
 
     // Classes do label
     const labelClasses = useMemo(
-      () => cn(styleConfig.label, 'font-medium', hasError && 'text-destructive', labelClassName),
+      () =>
+        cn(
+          styleConfig.label,
+          'font-medium leading-none',
+          hasError && 'text-destructive',
+          labelClassName,
+        ),
       [styleConfig.label, hasError, labelClassName],
     );
 

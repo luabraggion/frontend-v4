@@ -11,18 +11,125 @@ import FileUpload from '@/components/forms/FileUpload';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
+import { applyCurrencyMask } from '@/utils/masks';
 import { PackagePlusIcon } from 'lucide-react';
-import { useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
+import { z } from 'zod';
+
+// Schema de validação Zod para configurações de premiação
+const configuracoesPremiacoesSchema = z
+  .object({
+    filtrarPorValorGasto: z.boolean(),
+    filtrarPorProduto: z.boolean(),
+    valorMinimoGasto: z.string().optional(),
+    tipoResgate: z.string().min(1, 'Selecione o tipo de resgate'),
+    tipoAcumulacao: z.string().min(1, 'Selecione o tipo de acumulação'),
+    tipoSorteio: z.string().min(1, 'Selecione o tipo de sorteio'),
+    arquivoRegulamento: z
+      .instanceof(File, { message: 'Faça upload do documento de regulamento' })
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    // Se filtrar por valor gasto, valorMinimoGasto é obrigatório e deve ser válido
+    if (data.filtrarPorValorGasto) {
+      // Verifica se o campo está vazio
+      if (!data.valorMinimoGasto || data.valorMinimoGasto.trim().length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Informe um valor mínimo válido maior que R$ 0,00',
+          path: ['valorMinimoGasto'],
+        });
+        return;
+      }
+
+      // Valida se o valor é maior que zero
+      const numbers = data.valorMinimoGasto.replace(/\D/g, '');
+      const valorNumerico = parseInt(numbers || '0') / 100;
+      if (valorNumerico <= 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Informe um valor mínimo válido maior que R$ 0,00',
+          path: ['valorMinimoGasto'],
+        });
+      }
+    }
+  });
+
+type ConfiguracoesPremiacoesFormData = z.infer<typeof configuracoesPremiacoesSchema>;
+
+// Interface para expor métodos do componente
+export interface StepConfiguracoesPremiacoesRef {
+  validar: () => boolean;
+}
 
 /**
  * Componente para a etapa de configurações de premiação no fluxo de criação de benefícios
  */
-export default function StepConfiguracoesPremiacoes() {
+const StepConfiguracoesPremiacoes = forwardRef<StepConfiguracoesPremiacoesRef>((props, ref) => {
   // Estado para controlar o switch de filtrar por valor gasto
-  const [filtrarPorValorGasto, setFiltrarPorValorGasto] = useState(true);
+  const [filtrarPorValorGasto, setFiltrarPorValorGasto] = useState(false);
 
   // Estado para controlar o switch de filtrar por produto incentivador
   const [filtrarPorProduto, setFiltrarPorProduto] = useState(false);
+
+  // Estados para os campos obrigatórios
+  const [valorMinimoGasto, setValorMinimoGasto] = useState('');
+  const [tipoResgate, setTipoResgate] = useState('');
+  const [tipoAcumulacao, setTipoAcumulacao] = useState('');
+  const [tipoSorteio, setTipoSorteio] = useState('');
+  const [arquivoRegulamento, setArquivoRegulamento] = useState<File | null>(null);
+
+  // Estado para erros de validação
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Função para validar o formulário
+  const validarFormulario = (): boolean => {
+    console.log('=== INICIANDO VALIDAÇÃO ===');
+    console.log('filtrarPorValorGasto:', filtrarPorValorGasto);
+    console.log('valorMinimoGasto:', valorMinimoGasto);
+    console.log('tipoResgate:', tipoResgate);
+    console.log('tipoAcumulacao:', tipoAcumulacao);
+    console.log('tipoSorteio:', tipoSorteio);
+
+    try {
+      configuracoesPremiacoesSchema.parse({
+        filtrarPorValorGasto,
+        filtrarPorProduto,
+        valorMinimoGasto,
+        tipoResgate,
+        tipoAcumulacao,
+        tipoSorteio,
+        arquivoRegulamento,
+      });
+
+      // Limpa erros se validação passar
+      setErrors({});
+      console.log('✅ VALIDAÇÃO PASSOU');
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        // Mapeia os erros do Zod para um objeto de erros
+        const formattedErrors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            formattedErrors[err.path[0].toString()] = err.message;
+          }
+        });
+
+        console.log('❌ ERROS DE VALIDAÇÃO:');
+        console.log('Erros encontrados:', formattedErrors);
+        console.log('Total de erros:', Object.keys(formattedErrors).length);
+
+        setErrors(formattedErrors);
+      }
+      return false;
+    }
+  };
+
+  // Expõe o método de validação para o componente pai via ref
+  useImperativeHandle(ref, () => ({
+    validar: validarFormulario,
+  }));
 
   return (
     <section>
@@ -44,7 +151,13 @@ export default function StepConfiguracoesPremiacoes() {
                 id="filtro-valor"
                 className="data-[state=checked]:bg-green-500"
                 checked={filtrarPorValorGasto}
-                onCheckedChange={setFiltrarPorValorGasto}
+                onCheckedChange={(checked) => {
+                  setFiltrarPorValorGasto(checked);
+                  // Limpa erro do valorMinimoGasto quando desliga o switch
+                  if (!checked && errors.valorMinimoGasto) {
+                    setErrors((prev) => ({ ...prev, valorMinimoGasto: '' }));
+                  }
+                }}
               />
               <Label htmlFor="filtro-valor" className="text-gray-500 font-normal">
                 Filtrar por valor gasto
@@ -103,51 +216,112 @@ export default function StepConfiguracoesPremiacoes() {
         {filtrarPorValorGasto && (
           <div className="grid gap-4 border p-4 rounded-md">
             <Label>Qual o minímo de valor gasto?</Label>
-            <Input placeholder="R$ 150,00" hideLabel />
+            <Input
+              placeholder="R$ 0,00"
+              hideLabel
+              value={valorMinimoGasto}
+              onChange={(e) => {
+                const maskedValue = applyCurrencyMask(e.target.value);
+                setValorMinimoGasto(maskedValue);
+                // Limpa erro ao digitar
+                if (errors.valorMinimoGasto) {
+                  setErrors((prev) => ({ ...prev, valorMinimoGasto: '' }));
+                }
+              }}
+              className={`focus-visible:outline-none focus-visible:ring-0 ${
+                errors.valorMinimoGasto
+                  ? 'border-red-500 focus-visible:border-red-500'
+                  : 'focus-visible:border-blue-200'
+              }`}
+            />
+            {errors.valorMinimoGasto && (
+              <p className="text-sm text-red-500 mt-1">{errors.valorMinimoGasto}</p>
+            )}
           </div>
         )}
-        <RadioGroupCustom
-          label="Selecione o tipo de resgate do produto"
-          items={[
-            { value: 'resgate-automatico', label: 'Resgate Automático' },
-            { value: 'resgate-manual', label: 'Resgate Manual' },
-          ]}
-          //defaultValue="resgate-automatico"
-          className="border p-4 rounded-md"
-          labelClassName="font-normal text-gray-500"
-          onChange={(_value) => {}}
-        />
-        <RadioGroupCustom
-          label="Defina se os valores das compras serão acumulados ao longo da campanha ou avaliados individualmente por compra."
-          items={[
-            { value: 'acumulativo', label: 'Acumulativo' },
-            { value: 'nao-acumulativo', label: 'Não Acumulativo' },
-          ]}
-          //defaultValue="resgate-automatico"
-          className="border p-4 rounded-md"
-          labelClassName="font-normal text-gray-500"
-          onChange={(_value) => {}}
-        />
-        <RadioGroupCustom
-          label="Selecione se o sorteio é oficial ou não oficial"
-          items={[
-            { value: 'oficial', label: 'Oficial via SECAP ' },
-            { value: 'nao-oficial', label: 'Não Oficial' },
-          ]}
-          //defaultValue="resgate-automatico"
-          className="border p-4 rounded-md"
-          labelClassName="font-normal text-gray-500"
-          onChange={(_value) => {}}
-        />
-        <FileUpload
-          label="Documento Regulamento e Termos da Premiação"
-          onFileSelect={(_file) => {}}
-          accept="application/pdf"
-          maxSizeMB={10}
-          className="mt-2"
-          acceptText="PDF até 10MB"
-        />
+        <div className="grid gap-3">
+          <RadioGroupCustom
+            label="Selecione o tipo de resgate do produto"
+            items={[
+              { value: 'resgate-automatico', label: 'Resgate Automático' },
+              { value: 'resgate-manual', label: 'Resgate Manual' },
+            ]}
+            className={`border p-4 rounded-md ${errors.tipoResgate ? 'border-red-500' : ''}`}
+            labelClassName="font-normal text-gray-500"
+            onChange={(value) => {
+              setTipoResgate(value);
+              // Limpa erro ao selecionar
+              if (errors.tipoResgate) {
+                setErrors((prev) => ({ ...prev, tipoResgate: '' }));
+              }
+            }}
+          />
+          {errors.tipoResgate && <p className="text-sm text-red-500 -mt-2">{errors.tipoResgate}</p>}
+        </div>
+        <div className="grid gap-3">
+          <RadioGroupCustom
+            label="Defina se os valores das compras serão acumulados ao longo da campanha ou avaliados individualmente por compra."
+            items={[
+              { value: 'acumulativo', label: 'Acumulativo' },
+              { value: 'nao-acumulativo', label: 'Não Acumulativo' },
+            ]}
+            className={`border p-4 rounded-md ${errors.tipoAcumulacao ? 'border-red-500' : ''}`}
+            labelClassName="font-normal text-gray-500"
+            onChange={(value) => {
+              setTipoAcumulacao(value);
+              // Limpa erro ao selecionar
+              if (errors.tipoAcumulacao) {
+                setErrors((prev) => ({ ...prev, tipoAcumulacao: '' }));
+              }
+            }}
+          />
+          {errors.tipoAcumulacao && (
+            <p className="text-sm text-red-500 -mt-2">{errors.tipoAcumulacao}</p>
+          )}
+        </div>
+        <div className="grid gap-3">
+          <RadioGroupCustom
+            label="Selecione se o sorteio é oficial ou não oficial"
+            items={[
+              { value: 'oficial', label: 'Oficial via SECAP ' },
+              { value: 'nao-oficial', label: 'Não Oficial' },
+            ]}
+            className={`border p-4 rounded-md ${errors.tipoSorteio ? 'border-red-500' : ''}`}
+            labelClassName="font-normal text-gray-500"
+            onChange={(value) => {
+              setTipoSorteio(value);
+              // Limpa erro ao selecionar
+              if (errors.tipoSorteio) {
+                setErrors((prev) => ({ ...prev, tipoSorteio: '' }));
+              }
+            }}
+          />
+          {errors.tipoSorteio && <p className="text-sm text-red-500 -mt-2">{errors.tipoSorteio}</p>}
+        </div>
+        <div className="grid gap-3">
+          <FileUpload
+            label="Documento Regulamento e Termos da Premiação"
+            onFileSelect={(file) => {
+              setArquivoRegulamento(file);
+              // Limpa erro ao fazer upload
+              if (errors.arquivoRegulamento) {
+                setErrors((prev) => ({ ...prev, arquivoRegulamento: '' }));
+              }
+            }}
+            accept="application/pdf"
+            maxSizeMB={10}
+            className={`mt-2 ${errors.arquivoRegulamento ? 'border-red-500' : ''}`}
+            acceptText="PDF até 10MB"
+          />
+          {errors.arquivoRegulamento && (
+            <p className="text-sm text-red-500">{errors.arquivoRegulamento}</p>
+          )}
+        </div>
       </section>
     </section>
   );
-}
+});
+
+StepConfiguracoesPremiacoes.displayName = 'StepConfiguracoesPremiacoes';
+
+export default StepConfiguracoesPremiacoes;
