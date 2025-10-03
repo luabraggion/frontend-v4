@@ -540,6 +540,7 @@ const StepPersonalizacao: React.FC = () => {
                                   <div className="flex-grow flex flex-col items-center justify-center gap-4">
                                     {/* Roleta */}
                                     <Wheel
+                                      key={`wheel-botao-${numeroDivisoes}`}
                                       size={250}
                                       options={coresRoleta
                                         .slice(0, numeroDivisoes)

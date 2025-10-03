@@ -69,6 +69,7 @@ const Wheel: React.FC<WheelProps> = ({
   const startRef = useRef<number | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const rotationRef = useRef(0); // rotação atual em radianos
+  const hasDrawnInitialRef = useRef(false); // flag para controlar desenho inicial
 
   const n = options?.length ?? 0;
   // verificação defensiva
@@ -134,11 +135,8 @@ const Wheel: React.FC<WheelProps> = ({
       const words = label.split(' ');
       let lines: string[] = [];
 
-      // No modo vertical, SEMPRE tentar quebrar em duas linhas se houver mais de uma palavra
-      // No modo horizontal, só quebrar se não couber
-      const shouldTryBreak = isVerticalText
-        ? words.length > 1
-        : measured > maxWidth && words.length > 1;
+      // Só tentar quebrar em duas linhas se não couber em uma linha
+      const shouldTryBreak = measured > maxWidth && words.length > 1;
 
       if (shouldTryBreak) {
         let line1 = '';
@@ -216,6 +214,9 @@ const Wheel: React.FC<WheelProps> = ({
         cctx.drawImage(off, 0, 0);
       }
     }
+
+    // Reseta o flag quando o canvas offscreen é recriado
+    hasDrawnInitialRef.current = false;
     // sem necessidade de limpeza aqui
   }, [options, size, textOrientation, n]);
 
@@ -317,9 +318,12 @@ const Wheel: React.FC<WheelProps> = ({
     };
   }, []);
 
-  // initial draw
+  // initial draw - apenas uma vez quando o offscreen canvas estiver pronto
   useEffect(() => {
-    draw();
+    if (offscreenRef.current && !hasDrawnInitialRef.current) {
+      draw();
+      hasDrawnInitialRef.current = true;
+    }
   }, [draw]);
 
   if (!options || options.length === 0) {
