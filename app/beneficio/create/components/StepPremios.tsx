@@ -438,7 +438,7 @@ export default function StepPremios() {
               }`}
               placeholder="Deixe em branco para ilimitado"
             />
-            {errors.estoque && <p className="text-sm text-red-500 mt-1">{errors.estoque}</p>}
+            {errors.estoque && <p className="text-sm text-red-500">{errors.estoque}</p>}
           </div>
         </div>
       </Drawer>

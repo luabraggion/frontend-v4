@@ -4,7 +4,7 @@ import { Breadcrumb } from '@/components/layout';
 import { ProgressBarCircle } from '@/components/navigation';
 import { Step } from '@/components/navigation/ProgressBarCircle';
 import { usePageTitle } from '@/components/PageTitleContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/index';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,7 +15,7 @@ import StepConfiguracoesPremiacoes from './components/StepConfiguracoesPremiacoe
 import StepDadosBasicos from './components/StepDadosBasicos';
 import StepPersonalizacao from './components/StepPersonalizacao';
 import StepPremios from './components/StepPremios';
-import StepPublico from './components/StepPublico';
+import StepPublico, { StepPublicoRef } from './components/StepPublico';
 
 /**
  * Interface para as etapas do wizard de criação de benefícios
@@ -50,8 +50,21 @@ export default function Page() {
   // Estado para controle da etapa atual do wizard
   const [currentStep, setCurrentStep] = useState(1);
 
+  // Refs para acessar métodos de validação dos steps
+  const stepPublicoRef = useRef<StepPublicoRef>(null);
+
   // Funções para avançar e retroceder etapas
   const nextStep = () => {
+    // Valida o step atual antes de avançar
+    if (currentStep === 2) {
+      // Valida Step de Público
+      const isValid = stepPublicoRef.current?.validar();
+      if (!isValid) {
+        console.log('Validação do Step Público falhou');
+        return; // Impede avançar se houver erros
+      }
+    }
+
     if (currentStep < 7) setCurrentStep(currentStep + 1);
   };
 
@@ -77,7 +90,7 @@ export default function Page() {
         <CreateWizardProvider>
           <div className="bg-white rounded-xl p-8 mt-20">
             {currentStep === 1 && <StepDadosBasicos />}
-            {currentStep === 2 && <StepPublico />}
+            {currentStep === 2 && <StepPublico ref={stepPublicoRef} />}
             {currentStep === 3 && <StepConfiguracoesPremiacoes />}
             {currentStep === 4 && <StepPremios />}
             {currentStep === 5 && <StepPersonalizacao />}
