@@ -9,6 +9,7 @@ import { DownloadIcon, MinusIcon, PlusIcon } from 'lucide-react';
 import Image from 'next/image';
 import React, { useRef, useState } from 'react';
 import { ColorPicker } from './ColorPicker';
+import ColorPickerFixed from './ColorPickerFixed';
 import { SingleColorPicker } from './SingleColorPicker';
 import { UploadAccordionItem } from './UploadAccordionItem';
 import { useFileUploads, useItensPersonalizacao, useItensUpload } from './useFileUploads';
@@ -411,15 +412,14 @@ const StepPersonalizacao: React.FC = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1">
                           {/* Lado esquerdo - Seletor de cores */}
                           <div className="lg:col-span-2">
-                            <ColorPicker
-                              maxColors={maxDivisoes}
+                            <ColorPickerFixed
+                              count={numeroDivisoes || 12}
                               defaultColors={coresRoleta}
                               onChange={(colors: string[]) => {
+                                // Mantém o mesmo número de cores (fixo via count) e apenas edita valores
                                 setCoresRoleta(colors);
-                                if (colors.length !== numeroDivisoes) {
-                                  setNumeroDivisoes(colors.length);
-                                }
-                                console.log('Cores atualizadas:', colors);
+                                // Não permitir alterar numeroDivisoes por aqui; ele vem de outra etapa/regra
+                                console.log('Cores atualizadas (fixas):', colors);
                               }}
                             />
                           </div>
