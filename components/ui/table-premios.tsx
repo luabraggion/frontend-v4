@@ -2,6 +2,7 @@
 
 import { CustomDropdownMenu } from '@/components/forms';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
   TableBody,
@@ -29,6 +30,10 @@ interface TablePremiosProps {
   onDelete?: (id: number) => void;
   onView?: (premio: Premio) => void;
   className?: string;
+  // Props para seleção múltipla
+  selectedIds?: number[];
+  onToggleSelect?: (id: number) => void;
+  onToggleSelectAll?: () => void;
 }
 
 /**
@@ -41,6 +46,9 @@ export function TablePremios({
   onDelete,
   onView,
   className = '',
+  selectedIds = [],
+  onToggleSelect,
+  onToggleSelectAll,
 }: TablePremiosProps) {
   // Função para renderizar o badge do tipo
   const renderTipoBadge = (tipo: Premio['tipo']) => {
@@ -76,6 +84,15 @@ export function TablePremios({
       <Table>
         <TableHeader>
           <TableRow>
+            {onToggleSelectAll && (
+              <TableHead className="w-[50px]">
+                <Checkbox
+                  checked={premios.length > 0 && selectedIds.length === premios.length}
+                  onCheckedChange={onToggleSelectAll}
+                  aria-label="Selecionar todos"
+                />
+              </TableHead>
+            )}
             <TableHead className="w-[80px] text-center">Posição</TableHead>
             <TableHead className="w-[120px]">Tipo</TableHead>
             <TableHead>Nome do Prêmio</TableHead>
@@ -87,7 +104,10 @@ export function TablePremios({
         <TableBody>
           {premios.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+              <TableCell
+                colSpan={onToggleSelectAll ? 7 : 6}
+                className="text-center py-8 text-muted-foreground"
+              >
                 Nenhum prêmio cadastrado ainda.
                 <br />
                 <span className="text-sm">Clique em "Adicionar Prêmio" para começar.</span>
@@ -96,6 +116,15 @@ export function TablePremios({
           ) : (
             premios.map((premio) => (
               <TableRow key={premio.id}>
+                {onToggleSelect && (
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedIds.includes(premio.id)}
+                      onCheckedChange={() => onToggleSelect(premio.id)}
+                      aria-label={`Selecionar ${premio.nome}`}
+                    />
+                  </TableCell>
+                )}
                 <TableCell className="font-medium justify-items-center">
                   <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
                     {premio.posicao}°

@@ -7,7 +7,7 @@ import { Button } from '@/components/index';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Premio, TablePremios } from '@/components/ui/table-premios';
 import { Clock4, Plus, Trash } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useCreateWizard } from './CreateWizardContext';
 
 export interface StepPremiosProps {
@@ -17,6 +17,9 @@ export interface StepPremiosProps {
 export default function StepPremios() {
   // Usa o contexto compartilhado para ler/editar os prêmios
   const { premios, setPremios } = useCreateWizard();
+
+  // Limite máximo de prêmios permitidos
+  const MAX_PREMIOS = 12;
 
   // Estado para armazenar o prêmio que será editado ou adicionado
   const [premioParaEditar, setPremioParaEditar] = useState<Premio | null>(null);
@@ -28,6 +31,12 @@ export default function StepPremios() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const [selectValueTipo, setSelectedValueTipo] = useState<string | null>(null);
+
+  // Estado para indicar se é um novo prêmio
+  const [isNovoPremioPendente, setIsNovoPremioPendente] = useState(false);
+
+  // Estado para seleção múltipla
+  const [premiosSelecionados, setPremiosSelecionados] = useState<number[]>([]);
 
   // Função unificada para abrir o drawer (adição ou edição)
   const abrirDrawerPremio = (premio?: Premio) => {
@@ -46,11 +55,13 @@ export default function StepPremios() {
       console.log('Iniciando adição de novo prêmio');
       setPremioParaEditar(novoPremio);
       setSelectedValueTipo('Produto');
+      setIsNovoPremioPendente(true); // Marca que é um novo prêmio
     } else {
       // Caso de edição
       console.log('Preparando edição do prêmio:', premio);
       setPremioParaEditar(premio);
       setSelectedValueTipo(premio.tipo);
+      setIsNovoPremioPendente(false); // Não é novo prêmio
     }
 
     setIsDrawerOpen(true);
@@ -74,45 +85,97 @@ export default function StepPremios() {
     setOpenDialog(false);
   };
 
+  // Função para confirmar exclusão múltipla
+  const confirmarExclusaoMultipla = () => {
+    if (premiosSelecionados.length > 0) {
+      console.log('Excluindo prêmios IDs:', premiosSelecionados);
+      setPremios((prev) => prev.filter((p) => !premiosSelecionados.includes(p.id)));
+      setPremiosSelecionados([]);
+    }
+    setOpenDialog(false);
+  };
+
+  // Função para selecionar/desselecionar um prêmio
+  const toggleSelecaoPremio = (id: number) => {
+    setPremiosSelecionados((prev) =>
+      prev.includes(id) ? prev.filter((premioId) => premioId !== id) : [...prev, id],
+    );
+  };
+
+  // Função para selecionar/desselecionar todos
+  const toggleSelecaoTodos = () => {
+    if (premiosSelecionados.length === premios.length) {
+      setPremiosSelecionados([]);
+    } else {
+      setPremiosSelecionados(premios.map((p) => p.id));
+    }
+  };
+
+  // Função para preparar exclusão múltipla
+  const prepararExclusaoMultipla = () => {
+    if (premiosSelecionados.length > 0) {
+      setPauseMode(false);
+      setOpenDialog(true);
+    }
+  };
+
   // Estado para controle do AlertDialog de Excluir
   const [openDialog, setOpenDialog] = useState(false);
 
   // Estado para controlar o método se será pausar campanha ou excluído
   const [pauseMode, setPauseMode] = useState(false);
 
-  // Estados para controle da paginação
-  const [paginaAtual, setPaginaAtual] = useState(1);
-  const itensPorPagina = 3;
-
-  // Calcula o total de páginas
-  const totalPaginas = Math.ceil(premios.length / itensPorPagina);
-
-  // Filtra os prêmios para exibir apenas os da página atual
-  const premiosExibidos = useMemo(() => {
-    const inicio = (paginaAtual - 1) * itensPorPagina;
-    const fim = inicio + itensPorPagina;
-    return premios.slice(inicio, fim);
-  }, [premios, paginaAtual, itensPorPagina]);
+  // Estados para controle da paginação (desabilitado por enquanto)
+  // const [paginaAtual, setPaginaAtual] = useState(1);
+  // const itensPorPagina = 3;
+  // const totalPaginas = Math.ceil(premios.length / itensPorPagina);
 
   return (
     <>
       <section className="space-y-6">
         <CardHeader className="px-0 gap-0">
           <CardTitle className="flex justify-between items-center">
-            <span className="text-lg font-semibold">Lista de Prêmios</span>
-            <Button onClick={() => abrirDrawerPremio()} className="gap-2" size="sm">
-              <Plus className="h-4 w-4" />
-              <span>Adicionar</span>
-            </Button>
+            <span className="text-lg font-semibold">
+              Lista de Prêmios{' '}
+              {premios.length >= MAX_PREMIOS && `(${premios.length}/${MAX_PREMIOS})`}
+            </span>
+            <div className="flex gap-2">
+              {premiosSelecionados.length > 0 && (
+                <Button
+                  onClick={prepararExclusaoMultipla}
+                  variant="destructive"
+                  className="gap-2"
+                  size="sm"
+                >
+                  <Trash className="h-4 w-4" />
+                  <span>Excluir ({premiosSelecionados.length})</span>
+                </Button>
+              )}
+              {premios.length < MAX_PREMIOS && (
+                <Button onClick={() => abrirDrawerPremio()} className="gap-2" size="sm">
+                  <Plus className="h-4 w-4" />
+                  <span>Adicionar</span>
+                </Button>
+              )}
+            </div>
           </CardTitle>
           <CardDescription>
             Prêmios são as recompensas que o cliente pode receber ao participar do benefício.
+            {premios.length >= MAX_PREMIOS && (
+              <span className="text-yellow-600 font-medium">
+                {' '}
+                Limite máximo de {MAX_PREMIOS} prêmios atingido.
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
         <TablePremios
-          premios={premiosExibidos}
+          premios={premios}
           onEdit={abrirDrawerPremio}
           onDelete={prepararExclusao}
+          selectedIds={premiosSelecionados}
+          onToggleSelect={toggleSelecaoPremio}
+          onToggleSelectAll={toggleSelecaoTodos}
         />
         {/* <div className="mt-6 flex justify-center">
           <PaginationWrapper
@@ -139,15 +202,29 @@ export default function StepPremios() {
             <Trash size={40} className="text-red-500" />
           )
         }
-        title={pauseMode ? 'Pausar Benefício' : 'Excluir Prêmio'}
+        title={
+          pauseMode
+            ? 'Pausar Benefício'
+            : premiosSelecionados.length > 1
+              ? 'Excluir Prêmios'
+              : 'Excluir Prêmio'
+        }
         description={
           pauseMode
             ? 'Ele ficará indisponível até ser reativado e pode ser ativado a qualquer momento.'
-            : 'Confirma a exclusão deste prêmio? Essa ação não poderá ser desfeita.'
+            : premiosSelecionados.length > 1
+              ? `Confirma a exclusão de ${premiosSelecionados.length} prêmios selecionados? Essa ação não poderá ser desfeita.`
+              : 'Confirma a exclusão deste prêmio? Essa ação não poderá ser desfeita.'
         }
         actionText={pauseMode ? 'Pausar' : 'Excluir'}
         className="w-full max-w-xs"
-        onAction={pauseMode ? () => setOpenDialog(false) : confirmarExclusao}
+        onAction={
+          pauseMode
+            ? () => setOpenDialog(false)
+            : premiosSelecionados.length > 1
+              ? confirmarExclusaoMultipla
+              : confirmarExclusao
+        }
       />
 
       {/* Drawer para edição de prêmio */}
@@ -156,6 +233,7 @@ export default function StepPremios() {
         onClose={() => {
           setIsDrawerOpen(false);
           setPremioParaEditar(null);
+          setIsNovoPremioPendente(false);
         }}
         actions={
           <div className="flex justify-between gap-4">
@@ -166,6 +244,7 @@ export default function StepPremios() {
               onClick={() => {
                 setIsDrawerOpen(false);
                 setPremioParaEditar(null);
+                setIsNovoPremioPendente(false);
               }}
             >
               Cancelar
@@ -178,18 +257,27 @@ export default function StepPremios() {
               onClick={() => {
                 // Verifica se é uma edição ou adição de prêmio
                 if (premioParaEditar) {
-                  const isNewPremio = !premios.some((p) => p.id === premioParaEditar.id);
                   console.log(
-                    isNewPremio ? 'Adicionando novo prêmio:' : 'Salvando alterações no prêmio:',
+                    isNovoPremioPendente
+                      ? 'Adicionando novo prêmio:'
+                      : 'Salvando alterações no prêmio:',
                     premioParaEditar,
                   );
 
-                  if (isNewPremio) {
+                  if (isNovoPremioPendente) {
                     // Adicionar novo prêmio à lista
-                    setPremios((prev) => [
-                      ...prev,
-                      { ...premioParaEditar, tipo: selectValueTipo as any },
-                    ]);
+                    console.log('Adicionando à lista de premios:', {
+                      ...premioParaEditar,
+                      tipo: selectValueTipo,
+                    });
+                    setPremios((prev) => {
+                      const novaLista = [
+                        ...prev,
+                        { ...premioParaEditar, tipo: selectValueTipo as any },
+                      ];
+                      console.log('Nova lista de premios:', novaLista);
+                      return novaLista;
+                    });
                   } else {
                     // Atualizar prêmio existente
                     setPremios((prev) =>
@@ -203,11 +291,10 @@ export default function StepPremios() {
                 }
                 setIsDrawerOpen(false);
                 setPremioParaEditar(null);
+                setIsNovoPremioPendente(false);
               }}
             >
-              {premioParaEditar && premios.some((p) => p.id === premioParaEditar.id)
-                ? 'Salvar'
-                : 'Adicionar'}
+              {isNovoPremioPendente ? 'Adicionar' : 'Salvar'}
             </Button>
           </div>
         }
@@ -223,7 +310,7 @@ export default function StepPremios() {
             <Input
               id="premio-nome"
               label="Nome do Prêmio"
-              defaultValue={premioParaEditar?.nome}
+              value={premioParaEditar?.nome || ''}
               onChange={(e) => {
                 if (premioParaEditar) {
                   setPremioParaEditar({ ...premioParaEditar, nome: e.target.value });
@@ -252,8 +339,8 @@ export default function StepPremios() {
               id="premio-estoque"
               label="Estoque"
               type="number"
-              defaultValue={
-                premioParaEditar?.estoque === null ? '' : String(premioParaEditar?.estoque)
+              value={
+                premioParaEditar?.estoque === null ? '' : String(premioParaEditar?.estoque || '')
               }
               onChange={(e) => {
                 if (premioParaEditar) {
