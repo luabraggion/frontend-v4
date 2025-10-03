@@ -353,5 +353,43 @@ const Wheel: React.FC<WheelProps> = ({
   );
 };
 
-export { Wheel };
-export default Wheel;
+// Comparador customizado para React.memo - evita re-render quando options tem os mesmos valores
+const arePropsEqual = (prevProps: WheelProps, nextProps: WheelProps) => {
+  // Verifica todas as props exceto options e onFinish
+  if (
+    prevProps.size !== nextProps.size ||
+    prevProps.className !== nextProps.className ||
+    prevProps.durationMs !== nextProps.durationMs ||
+    prevProps.spins !== nextProps.spins ||
+    prevProps.textOrientation !== nextProps.textOrientation ||
+    prevProps.spinButtonLabel !== nextProps.spinButtonLabel ||
+    prevProps.spinButtonSpinningLabel !== nextProps.spinButtonSpinningLabel ||
+    prevProps.showSpinButton !== nextProps.showSpinButton ||
+    prevProps.spinButtonColor !== nextProps.spinButtonColor ||
+    prevProps.spinButtonTextColor !== nextProps.spinButtonTextColor
+  ) {
+    return false;
+  }
+
+  // Compara options profundamente
+  if (prevProps.options.length !== nextProps.options.length) {
+    return false;
+  }
+
+  for (let i = 0; i < prevProps.options.length; i++) {
+    if (
+      prevProps.options[i].label !== nextProps.options[i].label ||
+      prevProps.options[i].color !== nextProps.options[i].color
+    ) {
+      return false;
+    }
+  }
+
+  // Ignora mudanças em onFinish e externalSpinRef (são refs/callbacks)
+  return true;
+};
+
+const MemoizedWheel = React.memo(Wheel, arePropsEqual);
+
+export { MemoizedWheel as Wheel, Wheel as WheelComponent };
+export default MemoizedWheel;
