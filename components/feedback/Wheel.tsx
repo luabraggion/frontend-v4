@@ -116,33 +116,86 @@ const Wheel: React.FC<WheelProps> = ({
       ctx.translate(cx + Math.cos(mid) * textRadius, cy + Math.sin(mid) * textRadius);
       // rotaciona o texto para ficar legível; se 'vertical', rotaciona 90°
       let textAngle = mid + Math.PI / 2; // deixar na posição legível
-      if (textOrientation === 'vertical') textAngle += Math.PI / 2;
+      const isVerticalText = textOrientation === 'vertical';
+      if (isVerticalText) textAngle += Math.PI / 2;
       ctx.rotate(textAngle);
 
-      // dimensionamento da fonte e truncamento
+      // dimensionamento da fonte e quebra de linha inteligente
       const maxWidth = radius * 0.8;
       const baseFontPx = Math.round(13 * dpr);
-      let fontPx = baseFontPx;
+      const fontPx = baseFontPx; // Mantém fonte fixa, sem redução
       ctx.font = `${fontPx}px Gordita, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto`;
       ctx.fillStyle = '#FFFFFF';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const label = String(options[i].label ?? '');
-      let measured = ctx.measureText(label).width;
-      while (measured > maxWidth && fontPx > 9 * dpr) {
-        fontPx -= 1 * dpr;
-        ctx.font = `${fontPx}px Gordita, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto`;
-        measured = ctx.measureText(label).width;
-      }
-      let drawLabel = label;
-      if (measured > maxWidth) {
-        // truncamento simples com reticências
-        while (drawLabel.length > 1 && ctx.measureText(drawLabel + '…').width > maxWidth) {
-          drawLabel = drawLabel.slice(0, -1);
+      const measured = ctx.measureText(label).width;
+
+      const words = label.split(' ');
+      let lines: string[] = [];
+
+      // No modo vertical, SEMPRE tentar quebrar em duas linhas se houver mais de uma palavra
+      // No modo horizontal, só quebrar se não couber
+      const shouldTryBreak = isVerticalText
+        ? words.length > 1
+        : measured > maxWidth && words.length > 1;
+
+      if (shouldTryBreak) {
+        let line1 = '';
+        let line2 = '';
+        let foundBreak = false;
+
+        // Tenta distribuir palavras entre duas linhas
+        for (let w = 0; w < words.length; w++) {
+          const testLine1 = line1 ? line1 + ' ' + words[w] : words[w];
+          const testLine2 = words.slice(w + 1).join(' ');
+
+          const width1 = ctx.measureText(testLine1).width;
+          const width2 = ctx.measureText(testLine2).width;
+
+          if (width1 <= maxWidth && width2 <= maxWidth) {
+            line1 = testLine1;
+            line2 = testLine2;
+            foundBreak = true;
+            break;
+          }
         }
-        drawLabel = drawLabel + '…';
+
+        if (foundBreak && line1 && line2) {
+          lines = [line1, line2];
+        }
       }
-      ctx.fillText(drawLabel, 0, 0);
+
+      // Se não conseguiu quebrar ou não deve quebrar, verificar se precisa truncar
+      if (lines.length === 0) {
+        if (measured > maxWidth) {
+          // Aplicar truncamento
+          let drawLabel = label;
+          while (drawLabel.length > 1 && ctx.measureText(drawLabel + '…').width > maxWidth) {
+            drawLabel = drawLabel.slice(0, -1);
+          }
+          lines = [drawLabel + '…'];
+        } else {
+          // Cabe em uma linha
+          lines = [label];
+        }
+      }
+
+      // Desenhar as linhas
+      const lineHeight = fontPx * 1.2;
+      const totalHeight = lines.length * lineHeight;
+
+      if (lines.length > 1) {
+        // Múltiplas linhas: sempre empilha verticalmente, mesmo no modo vertical
+        const startY = -(totalHeight / 2) + lineHeight / 2;
+
+        lines.forEach((line, idx) => {
+          ctx.fillText(line, 0, startY + idx * lineHeight);
+        });
+      } else {
+        // Uma linha apenas
+        ctx.fillText(lines[0], 0, 0);
+      }
       ctx.restore();
     }
 

@@ -361,7 +361,7 @@ const StepPersonalizacao: React.FC = () => {
                                       options={coresRoleta
                                         .slice(0, numeroDivisoes)
                                         .map((cor, index) => ({
-                                          label: `${index + 1}`,
+                                          label: premios[index]?.nome || `Prêmio ${index + 1}`,
                                           color: cor,
                                         }))}
                                       showSpinButton={true}
@@ -427,14 +427,14 @@ const StepPersonalizacao: React.FC = () => {
                                       options={coresRoleta
                                         .slice(0, numeroDivisoes)
                                         .map((cor, index) => ({
-                                          label: `${index + 1}`,
+                                          label: premios[index]?.nome || `Prêmio ${index + 1}`,
                                           color: cor,
                                         }))}
                                       showSpinButton={true}
                                       spinButtonLabel="Girar"
                                       spinButtonColor={dadosPersonalizacao.corBotao}
                                       spinButtonTextColor={dadosPersonalizacao.corTextoBotao}
-                                      textOrientation="horizontal"
+                                      textOrientation="vertical"
                                     />
                                   </div>
                                   <div className="p-3 flex justify-center">
@@ -544,11 +544,11 @@ const StepPersonalizacao: React.FC = () => {
                                       options={coresRoleta
                                         .slice(0, numeroDivisoes)
                                         .map((cor, index) => ({
-                                          label: `${index + 1}`,
+                                          label: premios[index]?.nome || `Prêmio ${index + 1}`,
                                           color: cor,
                                         }))}
                                       showSpinButton={false}
-                                      textOrientation="horizontal"
+                                      textOrientation="vertical"
                                       externalSpinRef={wheelSpinRef}
                                       onFinish={(option) => {
                                         setRoletaGirando(false);
